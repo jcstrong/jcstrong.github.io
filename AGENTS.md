@@ -274,11 +274,16 @@ curl -sL -o /dev/null -w "%{http_code}\n" https://jcstrong.github.io/img/2021040
 ## 10. 未完成 / 已知瑕疵
 
 - **列表页搜索框未接线**：`#search` 输入框与 `⌘K` 提示是静态摆设，Pagefind 索引已生成（`dist/pagefind/`），只差接 Pagefind UI
-- **`jcstrong/jc.github.io` 闲置仓库待删**：早期误建，用户需在网页端 Danger Zone 删除
 - **部分笔记图片缺失**：源图不在 OneDrive（旧电脑绝对路径），页面显示「（图片缺失：xxx）」占位
 - **代码块语言标识不规范**：`mysql`（小写）、`PYTHON`（大写）等导致 Shiki 回退纯文本
 - **公网密钥轮换建议**：历史上 4 组密钥曾被 GitHub 拦截，虽未真正上传，仍建议用户轮换
 - **无自动化测试**：只有第 9 节的手工验收清单，`src/lib/tree.ts` 可用 `node --experimental-strip-types` 直接单测
+
+### 已解决（留档，勿重复处理）
+
+- ~~`jcstrong/jc.github.io` 闲置仓库~~：早期误建的空仓库，已于 **2026-09-22** 由用户在网页端 Settings → Danger Zone 删除 ✅
+  - 注意：**不要**把 `jcstrong/jc.github.io` 与 `jcstrong/jcstrong.github.io` 搞混。前者已不存在；后者是唯一在用的仓库（`master` = 图床，`homepage` = 站点源码）
+  - 当时 `gh auth` 拿不到 `delete_repo` scope、刷新授权时设备码握手超时，故改由网页端手工执行；后续若需删仓库，先确认 scope：`gh auth status` 应显示 `delete_repo`
 
 ---
 
