@@ -3,18 +3,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.vue';
 import { getCollection } from 'astro:content';
 import { CATEGORY_META } from '../content.config';
+import { buildFolderTree, topFolders, stripCategory } from '../lib/tree';
 
 const allNotes = await getCollection('notes');
 
 const categoryStats = Object.entries(CATEGORY_META).map(([id, meta]) => {
   const notes = allNotes.filter(n => n.data.category === id);
-  const tags = [...new Set(notes.flatMap(n => n.data.tags))].slice(0, 6);
+  // 分区卡片上展示该板块的顶层文件夹（体现原始目录层级）
+  const tree = buildFolderTree(notes.map(n => ({
+    title: n.data.title,
+    slug: stripCategory(n.slug),
+    folderPath: n.data.folderPath,
+    updated: n.data.updated,
+    readingTime: n.data.readingTime,
+    tags: n.data.tags,
+    featured: n.data.featured,
+    summary: n.data.summary,
+    category: n.data.category,
+  })));
   return {
     id,
     index: `PART ${String(meta.order).padStart(2, '0')}`,
     label: meta.label,
     description: meta.description,
-    tags,
+    folders: topFolders(tree, 6),
+    folderCount: tree.children.length,
     count: notes.length,
     color: 'var(--accent)',
   };
@@ -22,7 +35,7 @@ const categoryStats = Object.entries(CATEGORY_META).map(([id, meta]) => {
 
 const featuredProjects = allNotes
   .filter(n => n.data.featured && n.data.category === 'projects')
-  .map(n => ({ ...n, slug: n.slug.split('/').slice(1).join('/') }))  // 剥离分类前缀
+  .map(n => ({ ...n, slug: stripCategory(n.slug) }))  // 剥离分类前缀
   .slice(0, 6);
 
 const skillMatrix = [

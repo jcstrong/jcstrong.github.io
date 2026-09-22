@@ -1,6 +1,8 @@
 ---
 title: "电脑ai及文件管家"
 category: skills
+folderPath: ""
+folderTop: ""
 tags: ["AI", "工具"]
 featured: false
 source: "电脑ai及文件管家.md"

@@ -4,6 +4,7 @@ import NoteCard from '../../../components/NoteCard.vue';
 import CategoryTree from '../../../components/CategoryTree.vue';
 import { getCollection } from 'astro:content';
 import { CATEGORY_META } from '../../../content.config';
+import { buildFolderTree, flattenTree, stripCategory } from '../../../lib/tree';
 
 export async function getStaticPaths() {
   const allNotes = await getCollection('notes');
@@ -20,16 +21,30 @@ const categoryNotes = allNotes
   .filter(n => n.data.category === category)
   .sort((a, b) => new Date(b.data.updated).getTime() - new Date(a.data.updated).getTime());
 
-const categoryStats = Object.entries(CATEGORY_META).map(([id, m]) => {
-  const notes = allNotes.filter(n => n.data.category === id);
-  const tags = [...new Set(notes.flatMap(n => n.data.tags))].slice(0, 8);
-  return { id, label: m.label, count: notes.length, tags };
-});
+const categoryStats = Object.entries(CATEGORY_META).map(([id, m]) => ({
+  id,
+  label: m.label,
+  count: allNotes.filter(n => n.data.category === id).length,
+}));
+
+// 当前板块的文件夹层级树（扁平化，带缩进深度）
+const tree = flattenTree(buildFolderTree(categoryNotes.map(n => ({
+  title: n.data.title,
+  slug: stripCategory(n.slug),
+  folderPath: n.data.folderPath,
+  updated: n.data.updated,
+  readingTime: n.data.readingTime,
+  tags: n.data.tags,
+  featured: n.data.featured,
+  summary: n.data.summary,
+  category: n.data.category,
+}))));
 
 const notesForRender = categoryNotes.map(n => ({
   title: n.data.title,
-  slug: n.slug.split('/').slice(1).join('/'),  // 剥离分类前缀，路由已含 category
+  slug: stripCategory(n.slug),
   category: n.data.category,
+  folderPath: n.data.folderPath,
   tags: n.data.tags,
   featured: n.data.featured,
   updated: n.data.updated,
@@ -43,6 +58,7 @@ const notesForRender = categoryNotes.map(n => ({
     <div class="list-header">
       <div class="breadcrumb mono">
         <a href="/">首页</a> / <span>{meta.label}</span>
+        <span class="crumb-count">{categoryNotes.length} 篇</span>
       </div>
       <div class="search-bar">
         <input type="text" id="search" placeholder={`在 ${categoryNotes.length} 篇笔记中搜索...`} class="search-input" />
@@ -51,35 +67,120 @@ const notesForRender = categoryNotes.map(n => ({
     </div>
 
     <div class="list-body">
-      <CategoryTree categories={categoryStats} currentCategory={category} />
+      <CategoryTree
+        categories={categoryStats}
+        currentCategory={category}
+        tree={tree}
+        client:idle
+      />
 
       <main class="list-main">
         <div class="list-title-row">
           <div>
             <h1 class="list-title">{meta.label}</h1>
-            <p class="list-desc">{categoryNotes.length} 篇 · {meta.description}</p>
+            <p class="list-desc" id="list-desc">
+              {categoryNotes.length} 篇 · 按 <span class="mono">Typora 目录层级</span> 树状分区 · {meta.description}
+            </p>
           </div>
           <div class="sort-options mono">
-            <span class="sort-active">最近更新</span>
-            <span>按字母</span>
-            <span>按阅读量</span>
+            <button class="sort-btn sort-active" data-sort="updated">最近更新</button>
+            <button class="sort-btn" data-sort="title">按标题</button>
+            <button class="sort-btn" data-sort="readingTime">按篇幅</button>
           </div>
         </div>
 
-        <div class="note-list">
+        <div class="filter-bar" id="filter-bar" hidden>
+          <span class="filter-label mono">当前分区</span>
+          <span class="filter-path mono" id="filter-path"></span>
+          <button class="filter-clear" id="filter-clear">清除 ✕</button>
+        </div>
+
+        <div class="note-list" id="flat-note-list">
           {notesForRender.map(note => <NoteCard note={note} />)}
         </div>
 
-        {categoryNotes.length === 0 && (
-          <div class="empty">
-            <p>该分类暂无笔记</p>
-            <p class="mono">运行 <code>npm run sync</code> 同步 Typora 笔记</p>
-          </div>
-        )}
+        <div class="empty" id="empty-hint" hidden>
+          <p>该分区下暂无笔记</p>
+        </div>
       </main>
     </div>
   </div>
 </BaseLayout>
+
+<script>
+  // 客户端：按文件夹层级筛选 + 排序（纯静态页，无需后端）
+  const list = document.getElementById('flat-note-list');
+  const cards = list ? Array.from(list.querySelectorAll('[data-folder]')) as HTMLElement[] : [];
+  const filterBar = document.getElementById('filter-bar');
+  const filterPath = document.getElementById('filter-path');
+  const emptyHint = document.getElementById('empty-hint');
+  const listDesc = document.getElementById('list-desc');
+  const totalCount = cards.length;
+  let activeFolder = '';
+  let sortBy = 'updated';
+
+  function applyFilter() {
+    let visible = 0;
+    for (const card of cards) {
+      const folder = card.dataset.folder || '';
+      const match = !activeFolder || folder === activeFolder || folder.startsWith(activeFolder + '/');
+      card.hidden = !match;
+      if (match) visible++;
+    }
+    if (filterBar) filterBar.hidden = !activeFolder;
+    if (filterPath) filterPath.textContent = activeFolder || '';
+    if (emptyHint) emptyHint.hidden = visible > 0;
+    if (listDesc) {
+      listDesc.textContent = activeFolder
+        ? `${visible} / ${totalCount} 篇 · 分区：${activeFolder}`
+        : `${totalCount} 篇 · 按 Typora 目录层级 树状分区`;
+    }
+  }
+
+  function applySort(mode: string) {
+    if (!list) return;
+    const sorted = [...cards].sort((a, b) => {
+      if (mode === 'title') return (a.dataset.title || '').localeCompare(b.dataset.title || '', 'zh-CN');
+      if (mode === 'readingTime') return Number(b.dataset.reading) - Number(a.dataset.reading);
+      return (b.dataset.updated || '').localeCompare(a.dataset.updated || '');
+    });
+    sorted.forEach(c => list.appendChild(c));
+  }
+
+  // 侧边栏（Vue 组件）通过自定义事件驱动筛选
+  document.addEventListener('select-folder', (e: Event) => {
+    activeFolder = (e as CustomEvent<string>).detail || '';
+    applyFilter();
+  });
+  document.addEventListener('select-sort', (e: Event) => {
+    sortBy = (e as CustomEvent<string>).detail || 'updated';
+    document.querySelectorAll('.sort-btn').forEach(btn => {
+      btn.classList.toggle('sort-active', (btn as HTMLElement).dataset.sort === sortBy);
+    });
+    applySort(sortBy);
+  });
+
+  document.querySelectorAll('.sort-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sortBy = (btn as HTMLElement).dataset.sort || 'updated';
+      document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('sort-active'));
+      btn.classList.add('sort-active');
+      applySort(sortBy);
+    });
+  });
+
+  document.getElementById('filter-clear')?.addEventListener('click', () => {
+    activeFolder = '';
+    applyFilter();
+  });
+
+  // 支持 URL 锚点深链：#folder=Python/Python_web
+  const hashFolder = decodeURIComponent(location.hash.replace(/^#folder=/, ''));
+  if (hashFolder && location.hash.startsWith('#folder=')) {
+    activeFolder = hashFolder;
+    applyFilter();
+  }
+</script>
 
 <style>
 .list-page {
@@ -101,6 +202,13 @@ const notesForRender = categoryNotes.map(n => ({
 
 .breadcrumb a {
   color: var(--text-secondary);
+}
+
+.crumb-count {
+  margin-left: 8px;
+  padding: 1px 6px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
 }
 
 .search-bar {
@@ -141,13 +249,15 @@ const notesForRender = categoryNotes.map(n => ({
 .list-main {
   flex: 1;
   padding: 20px 24px;
+  min-width: 0;
 }
 
 .list-title-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  gap: 16px;
 }
 
 .list-title {
@@ -165,13 +275,49 @@ const notesForRender = categoryNotes.map(n => ({
   display: flex;
   gap: 12px;
   font-size: 11px;
+}
+
+.sort-btn {
+  background: none;
+  border: none;
+  padding: 0 0 2px;
+  font-size: 11px;
+  font-family: inherit;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+
+.sort-btn.sort-active {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--text-primary);
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  background: var(--accent-light);
+  border-radius: var(--radius-md);
+  font-size: 11px;
+}
+
+.filter-label {
   color: var(--text-tertiary);
 }
 
-.sort-active {
-  color: var(--text-primary);
-  border-bottom: 1px solid var(--text-primary);
-  padding-bottom: 2px;
+.filter-path {
+  color: var(--accent-text);
+  flex: 1;
+}
+
+.filter-clear {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 11px;
+  cursor: pointer;
 }
 
 .note-list {
@@ -185,16 +331,5 @@ const notesForRender = categoryNotes.map(n => ({
   text-align: center;
   color: var(--text-tertiary);
   font-size: 13px;
-}
-
-.empty .mono {
-  font-size: 11px;
-  margin-top: 8px;
-}
-
-.empty code {
-  background: var(--bg-secondary);
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
 }
 </style>

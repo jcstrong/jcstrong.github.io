@@ -1,10 +1,21 @@
 <template>
-  <article class="note-card card-hover">
+  <article
+    class="note-card card-hover"
+    :data-folder="note.folderPath || ''"
+    :data-title="note.title"
+    :data-updated="note.updated"
+    :data-reading="note.readingTime"
+  >
     <div class="card-header">
       <h3 class="note-title">
         <a :href="`/notes/${note.category}/${note.slug}`">{{ note.title }}</a>
       </h3>
       <span class="note-meta mono">{{ note.updated }} · {{ note.readingTime }} min</span>
+    </div>
+    <div v-if="note.folderPath" class="note-folder mono">
+      <template v-for="(seg, i) in folderSegments" :key="i">
+        <span v-if="i > 0" class="folder-sep">/</span>{{ seg }}
+      </template>
     </div>
     <p class="note-summary">{{ note.summary }}</p>
     <div class="note-tags">
@@ -15,10 +26,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+
 interface Note {
   title: string;
   slug: string;
   category: string;
+  folderPath?: string;
   tags: string[];
   featured: boolean;
   updated: string;
@@ -26,7 +40,9 @@ interface Note {
   summary: string;
 }
 
-defineProps<{ note: Note }>();
+const props = defineProps<{ note: Note }>();
+
+const folderSegments = computed(() => (props.note.folderPath || '').split('/').filter(Boolean));
 </script>
 
 <style scoped>
@@ -65,6 +81,21 @@ defineProps<{ note: Note }>();
   font-size: 11px;
   color: var(--text-tertiary);
   white-space: nowrap;
+}
+
+.note-folder {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: 10px;
+  color: var(--accent);
+  margin-bottom: 8px;
+  opacity: 0.85;
+}
+
+.folder-sep {
+  margin: 0 5px;
+  color: var(--text-tertiary);
 }
 
 .note-summary {

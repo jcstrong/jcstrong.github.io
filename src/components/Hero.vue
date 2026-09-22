@@ -17,7 +17,10 @@
           <p class="card-desc">{{ cat.description }}</p>
         </div>
         <div class="card-tags">
-          <span v-for="tag in cat.tags" :key="tag" class="card-tag mono">{{ tag }}</span>
+          <span v-for="folder in cat.folders" :key="folder" class="card-tag mono">{{ folder }}</span>
+        </div>
+        <div class="card-foot mono">
+          <span>{{ cat.folderCount }} 个文件夹 · {{ cat.count }} 篇</span>
         </div>
         <div class="card-arrow">→</div>
       </a>
@@ -31,7 +34,8 @@ interface Category {
   index: string;
   label: string;
   description: string;
-  tags: string[];
+  folders: string[];
+  folderCount: number;
   count: number;
   color: string;
 }
@@ -128,6 +132,14 @@ defineProps<{ categories: Category[] }>();
   border-radius: 4px;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
+}
+
+.card-foot {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 0.5px solid var(--border-tertiary);
+  font-size: 10px;
+  color: var(--text-tertiary);
 }
 
 .card-arrow {

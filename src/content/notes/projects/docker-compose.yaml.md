@@ -1,6 +1,8 @@
 ---
 title: "docker-compose.yaml"
 category: projects
+folderPath: ""
+folderTop: ""
 tags: ["Docker", "DevOps", "服务编排"]
 featured: true
 source: "docker-compose.yaml.md"

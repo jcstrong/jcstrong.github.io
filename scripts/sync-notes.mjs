@@ -11,7 +11,7 @@
  * 用法：node scripts/sync-notes.mjs
  */
 
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync, copyFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync, copyFileSync, rmSync } from 'node:fs';
 import { join, relative, dirname, basename, extname, resolve, isAbsolute } from 'node:path';
 
 const TYPORA_ROOT = '/Users/chenjun/Library/CloudStorage/OneDrive-个人/Typora';
@@ -47,6 +47,9 @@ const CLASSIFICATION_MAP = [
   // PART 02 技能图谱（按技术域组织）
   { pattern: 'Python/Python语法/', category: 'skills', tags: ['Python', '语法基础'] },
   { pattern: 'Python/Python工具/', category: 'skills', tags: ['Python', '工具'] },
+  { pattern: 'Python/爬虫/', category: 'skills', tags: ['Python', '爬虫'] },
+  // 泛匹配需排在具体规则（聊天机器人 / QA 项目）之后
+  { pattern: 'Python/NLP-quark已备份/', category: 'skills', tags: ['NLP'] },
   { pattern: 'Python/Python_web/', category: 'skills', tags: ['Python', 'Web'] },
   { pattern: 'Python/NLP-quark已备份/0.pytorch/', category: 'skills', tags: ['PyTorch', 'AI 模型'] },
   { pattern: 'Python/NLP-quark已备份/1.RNN/', category: 'skills', tags: ['RNN', 'NLP'] },
@@ -199,10 +202,17 @@ function injectFrontmatter(content, rule, relPath, mtime) {
   const readingTime = estimateReadingTime(content);
   const updated = mtime.toISOString().split('T')[0];
 
+  // 原始文件夹层级（保留 Typora 目录结构，供页面树状分区使用）
+  const relDir = dirname(relPath);
+  const folderPath = relDir === '.' ? '' : relDir.split('\\').join('/');
+  const folderTop = folderPath ? folderPath.split('/')[0] : '';
+
   const frontmatter = [
     '---',
     `title: ${JSON.stringify(basename(relPath, '.md'))}`,
     `category: ${rule.category}`,
+    `folderPath: ${JSON.stringify(folderPath)}`,
+    `folderTop: ${JSON.stringify(folderTop)}`,
     `tags: [${rule.tags.map(t => JSON.stringify(t)).join(', ')}]`,
     `featured: ${rule.featured || false}`,
     `source: ${JSON.stringify(relPath)}`,
@@ -269,14 +279,10 @@ function main() {
     process.exit(1);
   }
 
-  // 清空输出目录
+  // 清空输出目录（镜像文件夹结构，需整目录重建以避免残留旧层级）
   for (const cat of ['projects', 'skills', 'practice', 'study']) {
     const catDir = join(OUTPUT_ROOT, cat);
-    if (existsSync(catDir)) {
-      // 保留目录结构，只清空 .md 文件
-      const files = readdirSync(catDir).filter(f => f.endsWith('.md'));
-      // 递归清空
-    }
+    if (existsSync(catDir)) rmSync(catDir, { recursive: true, force: true });
   }
 
   // 扫描所有 markdown
@@ -290,14 +296,15 @@ function main() {
     const category = rule.category;
     stats[category]++;
 
-    // 构建输出路径（保留嵌套结构，但 category 作为根）
-    const noteSlug = note.relPath.replace(/\//g, '__').replace(/\.md$/, '');
-    const outputPath = join(OUTPUT_ROOT, category, noteSlug + '.md');
+    // 输出路径镜像原始文件夹层级（category 作为根，保留 Typora 目录结构）
+    const relDir = dirname(note.relPath);
+    const pathKey = relDir === '.' ? '_root' : relDir.split('\\').join('/');
+    const outputPath = join(OUTPUT_ROOT, category, note.relPath);
     mkdirSync(dirname(outputPath), { recursive: true });
 
     // 读取并处理：图片路径改写 → 密钥脱敏 → 注入 frontmatter
     const content = readFileSync(note.fullPath, 'utf-8');
-    const processedContent = processImages(content, note.fullPath, noteSlug);
+    const processedContent = processImages(content, note.fullPath, pathKey);
     const redactedContent = redactSecrets(processedContent);
     const newContent = injectFrontmatter(redactedContent, rule, note.relPath, note.mtime);
 

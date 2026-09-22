@@ -5,6 +5,8 @@ const notes = defineCollection({
   schema: z.object({
     title: z.string(),
     category: z.enum(['projects', 'skills', 'practice', 'study']),
+    folderPath: z.string().default(''),
+    folderTop: z.string().default(''),
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
     source: z.string(),
