@@ -1,0 +1,129 @@
+---
+title: "2.2.10 ln命令"
+category: skills
+tags: ["Linux", "运维"]
+featured: false
+source: "Linux/Linux命令/2.2.10 ln命令.md"
+updated: 2021-02-09
+readingTime: 3
+summary: "toc linux可以给一个文件起多个名字，称为链接 同名的链接文件放在不同目录下，一个被修改，另一个也同时被修改  ln命令用途 为文件或目录建立链接Link 格式:    ln s 源文件或目录... 链接文件或目标目录  常用命令选项..."
+---
+[toc]
+
+linux可以给一个文件起多个名字，称为链接
+
+同名的链接文件放在不同目录下，一个被修改，另一个也同时被修改
+
+### ln命令用途
+
+为文件或目录建立链接(Link)
+
+格式:    ln [-s] 源文件或目录... 链接文件或目标目录 
+
+常用命令选项
+
+-s:建立符号链接文件(省略此项则建立硬链接)    
+
+符号链接:指向原始文件所在的路径，又称为软链接
+
+硬链接:指向原始文件对应的数据存储位置
+不能为目录建立硬链接文件
+    硬链接与原始文件必须位于同一分区(文件系统)中
+
+
+
+### 硬链接
+
+指向原始文件对应的数据存储位置
+
+以文件副本的形式存在，但不占用实际空间。
+
+不能对目录文件做硬连接
+
+硬链接与原始文件必须位于同一分区(文件系统)中，不能在不同的文件系统之间做硬连接。
+
+### 软链接（符号链接）
+
+指向原始文件所在的路径，又称为软链接
+
+链接以路径的形式存在
+
+删除源文件，只删除了数据不会删除链接，一旦以同样文件名创建了源文件，链接将继续指向该文件的新数据。
+
+软链接可以跨文件系统
+
+软链接可以对目录进行链接。
+
+### 实例
+
+#### 创建指向log文件的软链接
+
+##### 命令ln -s log linkname
+
+```
+[root@localhost test]# ln -s log lllink
+[root@localhost test]# ls
+file1.txt  file2.txt  file3.txt  file4.txt  file5.txt  lllink  log
+[root@localhost test]# file lllink
+lllink: symbolic link to log
+[root@localhost test]# 
+```
+
+创建指向文件的硬连接
+
+##### 命令ln file1.txt linkname
+
+不带-s参数
+
+```
+[root@localhost test]# ln file1.txt linkname
+[root@localhost test]# file linkname
+linkname: empty
+```
+
+#### 删除原文件
+
+软链接
+
+```
+[root@localhost test]# rm log
+rm：是否删除普通空文件 'log'？y 
+[root@localhost test]# file lllink
+lllink: broken symbolic link to log
+```
+
+硬链接不变 
+
+#### 创建指向目录的软链接
+
+命令：ln -s /root/test /home/log
+
+```
+[root@localhost test]# ln -s /root/test /home/log
+[root@localhost test]# ls -l /home/
+总用量 4
+drwx------. 16 it   it   4096 2月   8 08:09 it
+drwxr-xr-x.  2 root root   18 2月   8 08:56 log
+```
+
+#### 为目录创建链接
+
+```
+[root@localhost test]# ln -s /root/test log3
+[root@localhost test]# ls -l
+总用量 0
+-rw-rw-r--. 1 it   it    0 2月   8 06:06 file1.txt
+-rw-rw-r--. 1 it   it    0 2月   8 06:06 file2.txt
+lrwxrwxrwx. 1 root root 10 2月   8 08:58 log3 -> /root/test
+```
+
+在log3中操作，在/root/test就同步
+
+```
+[root@localhost test]# cp file1.txt  log3
+[root@localhost test]# ls log3
+file1.txt
+[root@localhost test]# ls /root/test
+file1.txt
+```
+

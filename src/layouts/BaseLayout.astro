@@ -1,0 +1,124 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Java 后端 / AI 智能体工程师的笔记档案' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a href="/" class="logo mono">jcstrong<span class="logo-dot">·</span>dev</a>
+        <nav class="nav">
+          <a href="/notes/projects">项目实战</a>
+          <a href="/notes/skills">技能图谱</a>
+          <a href="/notes/practice">工程实践</a>
+          <a href="/notes/study">学习笔记</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <span class="mono">© 2026 jcstrong.dev</span>
+        <span class="footer-meta">
+          <a href="https://github.com/jcstrong" target="_blank" rel="noopener">GitHub</a>
+          <span class="sep">/</span>
+          <span class="mono">218 notes · built with Astro</span>
+        </span>
+      </div>
+    </footer>
+
+    <style>
+      .site-header {
+        border-bottom: 0.5px solid var(--border-tertiary);
+        position: sticky;
+        top: 0;
+        background: var(--bg-primary);
+        z-index: 10;
+        backdrop-filter: saturate(180%) blur(8px);
+      }
+
+      .header-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 24px;
+      }
+
+      .logo {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-primary);
+        letter-spacing: -0.01em;
+      }
+
+      .logo-dot {
+        color: var(--accent);
+        margin: 0 2px;
+      }
+
+      .nav {
+        display: flex;
+        gap: 24px;
+        font-size: 13px;
+      }
+
+      .nav a {
+        color: var(--text-secondary);
+      }
+
+      .nav a:hover {
+        color: var(--accent);
+        opacity: 1;
+      }
+
+      .site-footer {
+        border-top: 0.5px solid var(--border-tertiary);
+        padding: 24px 0;
+        margin-top: 64px;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        color: var(--text-tertiary);
+      }
+
+      .footer-meta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .sep {
+        color: var(--border-secondary);
+      }
+
+      @media (max-width: 640px) {
+        .nav { gap: 14px; font-size: 12px; }
+        .footer-inner { flex-direction: column; gap: 8px; }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,130 @@
+---
+title: "3.4 ssh服务"
+category: skills
+tags: ["Linux", "运维"]
+featured: false
+source: "Linux/远程工具/3.4 ssh服务.md"
+updated: 2021-03-09
+readingTime: 3
+summary: "toc  SSH服务 SSHSecure Shell协议是一种在不安全的网络环境中，通过 加密和认证机制，实现安全的远程访问以及文件传输等业务 的网络安全协议。 SSH是由芬兰的一家公司开发的，但是因为受版权和加密算 法的限制，现在很多人都..."
+---
+[toc]
+
+### SSH服务
+
+SSH(Secure Shell)协议是一种在不安全的网络环境中，通过 加密和认证机制，实现安全的远程访问以及文件传输等业务 的网络安全协议。
+
+SSH是由芬兰的一家公司开发的，但是因为受版权和加密算 法的限制，现在很多人都转而使用OpenSSH，OpenSSH 是 SSH协议的免费开源实现。
+
+SSH最常见的应用就是，用它来取代传统的Telnet、 FTP等网络应用程序，通过SSH登录到远方机器执行 你想进行的工作与命令。在不安全的网路通讯环境中， 它提供了很强的验证(authentication)机制与非常 安全的通讯环境。
+
+### 两种级别的安全验证
+
+第一种级别(基于口令的安全验证)
+只要你知道自己帐号和口令， 就可以登录到远程主机。
+
+第二种级别(基于密匙的安全验证)
+需要依靠密匙，也就是你必须为自己创建一对密匙，并把公用密匙放在需要访问的服务器上
+
+
+
+
+
+
+
+#### 安装SSH服务
+
+```
+yum install opens-server
+```
+
+#### 启动与停止SSH服务
+
+```
+service sshd start
+```
+
+或者
+
+```
+systemctl start sshd
+```
+
+#### 设置SSH的配置文件sshd_config
+
+```
+vi /etc/ssh/sshd_config
+```
+
+1. 使 sshd服务运行在非标准端口上。添加一行内容为(假定设置监听端口是12345):port 12345
+2. 在客户端，用ssh <server addr> -p 12345登录服务器。
+3. 只允许 ssh v2的连接，设置protocol 2
+4. 禁止 root用户通过ssh登录，设置PermitRootLogin no
+5. 禁止用户使用空密码登录，设置 PermitEmptyPasswords no
+6. 限制登录失败后的重试次数，设置MaxAuthTries 3
+7. 只允许在列表中指定的用户登录，设置 AllowUsers user1 user2
+
+#### 使用SSH登录到远程主机
+
+第一次使用ssh登录远程主机时，会出现没有找到主机密钥的提示信息。输入"yes"后，系统会将远程主机的密钥加入到你的主目录下的`` .ssh/hostkeys``下
+
+```
+ssh 192.168.xxx.xxx
+```
+
+#### scp命令
+
+Linux scp 命令用于 Linux 之间复制文件和目录。
+
+scp 是 secure copy 的缩写, scp 是 linux 系统下基于 ssh 登陆进行安全的远程文件拷贝命令。
+
+scp 是加密的，[rcp](https://www.runoob.com/linux/linux-comm-rcp.html) 是不加密的，scp 是 rcp 的加强版。
+
+**常用格式:**
+
+```
+scp local_file remote_username@remote_ip:remote_folder 
+
+scp local_file remote_username@remote_ip:remote_file 
+
+scp local_file remote_ip:remote_folder
+
+scp local_file remote_ip:remote_file
+```
+
+将文件从本机复制到远端：
+
+```
+scp /home/test.tar.gz root@192.168.1.10:/home
+```
+
+将文件从远端复制到本机：
+
+```
+scp root@/home/test.tar.gz 192.168.1.20:/home/root/test.tar.gz
+```
+
+**常用格式:**
+
+```
+scp local_file remote_username@remote_ip:remote_folder 
+
+scp local_file remote_username@remote_ip:remote_file 
+
+scp local_file remote_ip:remote_folder
+
+scp local_file remote_ip:remote_file
+```
+
+[scp命令](https://www.runoob.com/linux/linux-comm-scp.html)
+
+#### 安装与使用SSH Secure Shell Client软件
+
+安装文件SSHSecureShellClient-3.2.9.zip
+
+文本框中填好你要登录的Linux系统的ip、用户名，端口默认为22，然后点击“Connect”按钮
+
+使用windows来操作linux系统了
+
+点击SSH Secure Shell Client的远程传文件的功能
+

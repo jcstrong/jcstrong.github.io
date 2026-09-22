@@ -1,0 +1,141 @@
+---
+title: "03网络构建"
+category: study
+tags: ["神经网络", "系统学习"]
+featured: false
+source: "Python/神经网络系统学习/03网络构建.md"
+updated: 2022-07-06
+readingTime: 2
+summary: "toc 网络构建               网络模型构建https://education.huaweicloud.com/courses/coursev1:HuaweiX+CBUCNXE088+Selfpaced/courseware/..."
+---
+[[toc]]
+
+网络构建             
+
+## [网络模型构建](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/22f94e68d9124cf18f7bd37bbbc1365c/b62d788ec4ee400fa26fb89840251cb5/)
+
+如何选择合适的神经网络？
+
+- 对特征提取具有高效性
+- 数据格式的简易性 
+- 数据的少量性
+
+卷积神经网络：降低数据量，神经网络简单
+
+循环神经网络：对时序数据，能够解决时间数据的依赖问题
+
+
+
+## [超参数设置](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/22f94e68d9124cf18f7bd37bbbc1365c/77e3949fc605466388240e8165a8d084/)
+
+错误率高的原因
+
+- 模型实现中有bug（如标签不合适）
+- 超参数选择不合适
+- 数据模型不匹配
+- 数据集构造
+
+参数和超参数
+
+学习模型中一般有两种参数，一种**参数**是可以从学习中得到，还有一种只能靠人的经验来设定，这类参数就叫做**超参数**。比如算法中的学习率、梯度下降法循环的数量、隐藏层数目、隐藏层单元数目、激活函数的选择都需要人为设置， 这些数字实际上控制了最后的参数和的值，所以它们被称作超参数
+
+调参策略
+
+- 网络调参方向 :
+  - 更深的网络
+  - 更加复杂的结构
+- 调参目的 :
+  - 提高泛化能
+  - 正则化
+  - 增加神经网络层数
+  - 使用正确的代价函数
+  - 使用好的权重初始化技术
+  - 人为拓展训练集
+  - 弃权技术
+
+
+
+提升CNN泛化能力
+
+- 使用更多数据
+- 使用更大批次
+- 调整数据分布
+- 调整目标函数
+- 调整网络结构
+- 数据增强
+- 权值正则化
+
+## [激活函数及损失函数选择](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/22f94e68d9124cf18f7bd37bbbc1365c/3a5eea888b414a9b95e4e8ca272a5360/)
+
+- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

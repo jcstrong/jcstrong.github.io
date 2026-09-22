@@ -1,0 +1,152 @@
+---
+title: "3.1 NFS服务"
+category: skills
+tags: ["Linux", "运维"]
+featured: false
+source: "Linux/远程工具/3.1 NFS服务.md"
+updated: 2022-05-23
+readingTime: 3
+summary: "toc  Network File System，网络文件系统 是一种基于网络的文件系统, NFS 的第一个版本是 SUN Microsystems 在20世纪80年代开发出来的。 NFS 需要将本地操作转换为网络操作，并在远端服务器上实 ..."
+---
+[toc]
+
+#### (Network File System，网络文件系统)
+
+是一种基于网络的文件系统, NFS 的第一个版本是 SUN Microsystems 在20世纪80年代开发出来的。
+
+NFS 需要将本地操作转换为网络操作，并在远端服务器上实 现，最后返回操作的结果，因此NFS 更像是远端服务器文件 系统在本地的一个文件系统代理，用户或者应用程序通过访问文件系统代理来访问真实的文件系统。
+
+#### NFS用途
+
+在两台linux之间共享文件
+
+通过NFS启动开发板，操作方便又能保护开发版
+
+
+
+> 为了实现平台无关性，NFS基于 OSI底 层实现。基于会话层的远程过程调用 (Remote Procedure Call，RPC )和基于表示层的外部数据表示 (External Data Representation，XDR )为NFS 提供所需的网络连接及解释基于这些连接发送的数据格式，它们使NFS可正常工作于不同平台。NFS功能多，不同的功能会开启不同的进程，每个进程都会用一个端口传输数据，所以端口是随机的，小于1024的
+
+#### 远程过程调用RPC
+
+Remote Prcedure Call
+
+能使客户端执行其他系统中程序的一种机制
+
+#### 客户端NFS和服务端NFS通信过程
+
+![截屏2021-03-03 下午11.06.08](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/5.png)
+
+#### 配置与使用NFS服务
+
+##### 安装NFS服务 
+
+检查是否安装NFS
+
+```
+# dpkg -l |grep -i "nfs"
+```
+
+安装NFS服务器
+
+```
+# sudo apt-get install nfs-kernel-server 
+# sudo apt-get install nfs-common
+```
+
+##### 启动与停止NFS服务
+
+```
+# service nfs-server start/stop/restart
+```
+
+使用ps命令查看进程
+
+```
+ # ps -aux | grep -i "nfs"
+```
+
+
+
+> [centos的某些具体命令有所不同](https://www.cnblogs.com/colinsupport/articles/9647099.html)
+>
+> 启动
+>
+> ```
+> sudo service nfs-server start/stop/restart
+> ```
+>
+> 
+
+##### 创建共享目录（导出目录）
+
+创建文件夹``/mnt/nfs-share``作为共享目录
+
+确定创建的共享目录任何人都是可读可写可执行
+
+```
+[root@jc mnt]# mkdir -p nfs-share/
+[root@jc mnt]# chmod 777 nfs-share/
+[root@jc mnt]# ls -l
+总用量 0
+drwxrwxrwx 2 root root 6 3月   7 15:48 nfs-share
+```
+
+##### 设置NFS的主配置文件/etc/exports 
+
+在exports文件中可以定义NFS系统的输出目录(即共享目录)、 访问权限和允许访问的主机等参数，格式如下
+
+```
+/nfs/public 192.168.0.0/24(rw,sync，no_subtree_check)
+```
+
+/nfs/public	[共享的目录] 
+
+192.168.0.0	[主机名1或IP1(参数1,参数2)] 
+
+192.168.0.0/24	一组计算机（0-24）
+
+sync:设置NFS服务器同步写磁盘，这样不会轻易丢失数据 
+no_subtree_check:不检查父目录权限
+
+ro:设置输出的共享目录只读，与rw不能共同使用
+rw:设置输出的共享目录可读写，与ro不能共同使用
+
+exports文件中“客户端主机地址”字段可以使用多种形式表示主机地址
+
+ 192.168.152.13 指定IP地址的主机
+ nfsclient.test.com 指定域名的主机
+ 192.168.1.0/24 指定网段中的所有主机 
+ *.test.com 指定域下的所有主机
+
+ \*	所有主机
+
+##### 使用mount命令挂载nfs文件系统
+
+安装nfs-common
+
+```
+apt-get install nfs-common
+```
+
+在home中创建文件夹``home/jc/nfs-client``作为客户端
+
+将共享目录挂载到这个客户端文件夹，相当于把共享目录当作一个文件系统挂载到目录上
+
+```
+[root@jc /]# mount -t nfs 172.24.9.52:/mnt/nfs-share sharetest/nfs-client
+```
+
+测试是否成功，可以发现两个文件夹含有相同文件
+
+```
+[root@jc nfs-share]# cp -r /tmp .
+[root@jc nfs-share]# ls
+tmp
+[root@jc nfs-share]# cd /tmp/sharetest/nfs-client
+[root@jc nfs-client]# ls
+tmp
+```
+
+#### 相关链接
+
+**[NFS命令原理、应用](https://www.cnblogs.com/f-ck-need-u/p/7305755.html)**

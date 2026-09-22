@@ -1,0 +1,154 @@
+---
+title: "08 订单"
+category: skills
+tags: ["Python", "Web"]
+featured: false
+source: "Python/Python_web/Django_web开发/商城项目前台/08 订单.md"
+updated: 2021-10-15
+readingTime: 4
+summary: "toc  Django迁移数据报错 django.db.utils.OperationalError: 3780, \"Referencing column 'sku_id' and referenced column 'id' in for..."
+---
+[toc]
+
+# Django迁移数据报错
+
+**django.db.utils.OperationalError: (3780, "Referencing column 'sku_id' and referenced column 'id' in foreign key constraint 'tb_order_goods_sku_id_e335e3b1_fk_tb_sku_id' are incompatible.")**
+
+
+
+是因为当前字段类型是BigInt，关键的主键的字段是int类型，最后找到了原因是因为当前Django升级到了3.2以上，所以每次使用migrate生成数据库的时候，主键id自动会变成BigInt类型，解决方法，修改每个表的主键的类型为int(11)
+
+在每个app的app.py文件里
+
+```python
+class IssueConfig(AppConfig):
+    default_auto_field = 'django.db.models.AutoField'
+    name = 'users'
+```
+
+修改BigAutoField 为AutoField
+
+
+
+# Django中的事务管理
+
+> **Django中事务的使用方案**
+
+- 在Django中可以通过**`django.db.transaction模块`**提供的**`atomic`**来定义一个事务。
+
+- **`atomic`**提供两种方案实现事务：
+
+  - 装饰器用法：
+
+    ```python
+    from django.db import transaction
+    
+    @transaction.atomic
+    def viewfunc(request):
+      # 这些代码会在一个事务中执行
+      ......
+    ```
+
+  - with语句用法：
+
+    ```python
+    from django.db import transaction
+    
+    def viewfunc(request):
+      # 这部分代码不在事务中，会被Django自动提交
+      ......
+    
+      with transaction.atomic():
+          # 这部分代码会在事务中执行
+          ......
+    ```
+
+> **事务方案的选择：**
+
+- **装饰器用法：**整个视图中所有MySQL数据库的操作都看做一个事务，范围太大，不够灵活。而且无法直接作用于类视图。
+- **with语句用法：**可以灵活的有选择性的把某些MySQL数据库的操作看做一个事务。而且不用关心视图的类型。
+- 综合考虑后我们选择 **with语句实现事务**
+
+> **事务中的保存点：**
+
+- 在Django中，还提供了保存点的支持，可以在事务中创建保存点来记录数据的特定状态，数据库出现错误时，可以回滚到数据保存点的状态。
+
+```python
+from django.db import transaction
+
+# 创建保存点
+save_id = transaction.savepoint()  
+# 回滚到保存点
+transaction.savepoint_rollback(save_id)
+# 提交从保存点到当前状态的所有数据库事务操作
+transaction.savepoint_commit(save_id)
+```
+
+
+
+
+
+# 使用乐观锁并发下单
+
+处理并发下单的方案
+
+- 悲观锁
+
+  - 当查询某条记录时，即让数据库为该记录加锁，锁住记录后别人无法操作，使用类似如下语法
+
+    ```sql
+    select stock from tb_sku where id=1 for update;
+    ```
+
+    ```python
+    SKU.objects.select_for_update().get(id=1)
+    ```
+
+  - 悲观锁类似于我们在多线程资源竞争时添加的互斥锁，容易出现死锁现象，采用不多。
+
+- 乐观锁
+
+  - 乐观锁并不是真实存在的锁，而是在更新的时候判断此时的库存是否是之前查询出的库存，如果相同，表示没人修改，可以更新库存，否则表示别人抢过资源，不再执行库存更新。类似如下操作
+
+    ```sql
+    update tb_sku set stock=2 where id=1 and stock=7;
+    ```
+
+    ```python
+    SKU.objects.filter(id=1, stock=7).update(stock=2)
+    ```
+
+- 任务队列
+
+  - 将下单的逻辑放到任务队列中（如celery），将并行转为串行，所有人排队下单。比如开启只有一个进程的Celery，一个订单一个订单的处理。
+
+
+
+
+
+# MySQL事务隔离级别
+
+- 事务隔离级别指的是在处理同一个数据的多个事务中，一个事务修改数据后，其他事务何时能看到修改后的结果。
+- MySQL数据库事务隔离级别主要有四种：
+  - `Serializable`：串行化，一个事务一个事务的执行。
+  - `Repeatable read`：可重复读，无论其他事务是否修改并提交了数据，在这个事务中看到的数据值始终不受其他事务影响。
+  - `Read committed`：读取已提交，其他事务提交了对数据的修改后，本事务就能读取到修改后的数据值。
+  - `Read uncommitted`：读取未提交，其他事务只要修改了数据，即使未提交，本事务也能看到修改后的数据值。
+  - MySQL数据库默认使用可重复读（ Repeatable read）。
+- 使用乐观锁的时候，如果一个事务修改了库存并提交了事务，那其他的事务应该可以读取到修改后的数据值，所以不能使用可重复读的隔离级别，应该修改为读取已提交（Read committed）。
+- 修改方式：
+
+```bash
+$ cd /etc/mysql/mysql.conf.d/
+$ sudo vim mysaqld.cnf
+```
+
+修改`transaction-isolation`
+
+```bash
+102 # ssl-ca=/etc/mysql/cacert.pem
+103 # ssl-cert=/etc/mysql/server-cert.pem
+104 # ssl-key=/etc/mysql/server-key.pem
+1085 transaction-isolation=READ-COMMITTED
+```
+

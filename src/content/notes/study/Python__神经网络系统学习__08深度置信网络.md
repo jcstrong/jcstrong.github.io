@@ -1,0 +1,14 @@
+---
+title: "08深度置信网络"
+category: study
+tags: ["神经网络", "系统学习"]
+featured: false
+source: "Python/神经网络系统学习/08深度置信网络.md"
+updated: 2022-07-06
+readingTime: 1
+summary: "深度置信网络介绍https://education.huaweicloud.com/courses/coursev1:HuaweiX+CBUCNXE088+Selfpaced/courseware/d9e267d735044cca99e14..."
+---
+
+
+# [深度置信网络介绍](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/d9e267d735044cca99e141c91cae670e/3a705e497c3c4da193d1c1eeaba38e96/1)
+

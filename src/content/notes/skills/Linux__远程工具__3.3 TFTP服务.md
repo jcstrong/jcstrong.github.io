@@ -1,0 +1,162 @@
+---
+title: "3.3 TFTP服务"
+category: skills
+tags: ["Linux", "运维"]
+featured: false
+source: "Linux/远程工具/3.3 TFTP服务.md"
+updated: 2021-03-08
+readingTime: 3
+summary: "toc  ftp ftp工作于宿主机上，可以提供目标机文件系统映像文件的下载，避免频繁拷贝  传输模式   文本模式ascii 文本传输器使用ASCII字符，并由回车键和换行符分开，   二进制模式binary 二进制不用转换或格式化就可传..."
+---
+[toc]
+
+### ftp
+
+ftp工作于宿主机上，可以提供目标机文件系统映像文件的下载，避免频繁拷贝
+
+#### 传输模式
+
+#####  文本模式(ascii)
+
+文本传输器使用ASCII字符，并由回车键和换行符分开，
+
+#####  二进制模式(binary)
+
+二进制不用转换或格式化就可传字符，二进制模式比文本模式更快，并且可以传输所有ASCII值，所以系统管理员一 般将FTP设置成二进制模式
+
+#### 传输方式
+
+##### 主动方式( PORT方式)
+
+主动模式下，FTP客户端从任意的非特殊的端口(N > 1023)连入到FTP服务器的命令端口--21端口。 然后客户端在N+1(N+1 >= 1024)端口监听，并且通过N+1(N+1 >= 1024)端口发送命令给 FTP服务器。服务器会反过来连接用户本地指定的数据端口，比如20端口。
+
+##### 被动方式( PASV方式)
+
+在被动方式FTP中，命令连接和数据连接都由客户端，这样就可以解决从服务器到客户端的数据端口的 入方向连接被防火墙过滤掉的问题。当开启一个FTP连接时，客户端打开两个任意的非特权本地端口 (N >; 1024和N+1)。第一个端口连接服务器的21端口，但与主动方式的FTP不同，客户端不会提交 PORT命令并允许服务器来回连它的数据端口，而是提交PASV命令
+
+### tftp
+
+TFTP 承载在 UDP 上，使用 UDP 67 端口，提供不可靠的数据流传输服务，使用超时重传方式来保证数据的到达。与 FTP 相比，TFTP 的大小要小的多。
+
+TFTP设计的时候是进行小文件传输的，因此它不具备通常的FTP的许多功能，它只能从文件服务器上获得或写入文件，不能列出目录，不进行认证，它传输8 位数据。
+
+tftp常用于下载引导文件
+
+
+
+### 配置tftp服务
+
+#### 用apt-get安装TFTP服务
+
+##### Ubuntu
+
+服务端应安装
+
+```
+sudo yum install tftpd-hpa
+```
+
+客户端应安装
+
+```
+sudo apt-get install tftp-hpa
+```
+
+安装“新一代网络守护进程服务程序” extend internet deamon
+
+```
+apt install xinetd
+```
+
+#####  CentOS
+
+```
+sudo yum install xinetd tftp tftp-server -y
+```
+
+> [centos搭建tftp服务器](https://blog.csdn.net/sunnyfg/article/details/82879070)
+
+
+
+
+
+#### 启动与停止TFTP服务
+
+启动服务
+
+```
+sudo service xinetd start
+sudo service tftp start 
+```
+
+查看进程
+
+```
+[root@localhost etc]# ps -ef |grep tftp
+root       11137       1  0 18:07 ?        00:00:00 /usr/sbin/in.tftpd -s /var/lib/tftpboot
+root       11200    7236  0 18:11 pts/0    00:00:00 grep --color=auto tftp
+```
+
+查看端口
+
+```
+[root@localhost etc]# netstat -a |grep tftp
+
+udp6       0      0 [::]:tftp               [::]:*   
+```
+
+#### 设置TFTP的配置文件xinetd.conf
+
+TFTP配置文件
+
+```
+/etc/default/tftd-hpa
+```
+
+```
+/etc/xinetd.d/tftp
+```
+
+TFTP_USERNAME="root"
+TFTP_DIRECTORY="/opt/tftpboot "
+TFTP_ADDRESS="0.0.0.0:69"
+TFTP_OPTIONS="-I -c -s"
+
+​	-I : 以stand alone 模式启动TFTP服务，而不是从xinetd启动
+
+​		stand alone
+
+​		super daemon
+
+​	-C : 可创建新文件
+
+​	-S : BISETFTP
+
+ 
+
+如果从xinetd启动，要修改xinetd服务配置文件中下面的内容
+
+/opt是位置
+
+```
+service tftp
+{
+	socket_type	=dgram
+	protocol	=udp
+        wait            =yes
+        user            =root
+        server          =/usr/sbin/in.tftpd
+        server_args     =-s /opt/tftpboot -c
+        per_source      =11
+        cps             =100 2
+        flags           =IPv4
+
+
+}
+```
+
+[centos安装tftp](https://www.cnblogs.com/xiaochina/p/5699232.html)
+
+#### 使用TFTP传输文件
+
+[mooc这节课没看呢](https://www.icourse163.org/learn/JSIT-1001754045?tid=1463288469#/learn/content?type=detail&id=1240622421&cid=1262234921)

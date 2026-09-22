@@ -1,0 +1,31 @@
+{
+  "name": "jcstrong.github.io",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "陈俊超个人主页 - Java 后端 / AI 智能体工程师笔记档案",
+  "scripts": {
+    "sync": "node scripts/sync-notes.mjs",
+    "dev": "npm run sync && astro dev",
+    "start": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.0",
+    "@astrojs/vue": "^4.0.0",
+    "@astrojs/mdx": "^3.1.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "vue": "^3.5.0",
+    "@vitejs/plugin-vue": "^5.1.0",
+    "unocss": "^0.63.0"
+  },
+  "devDependencies": {
+    "pagefind": "^1.1.0",
+    "gray-matter": "^4.0.3",
+    "remark": "^15.0.1",
+    "remark-html": "^16.0.1",
+    "shiki": "^1.16.0"
+  }
+}

@@ -1,0 +1,40 @@
+---
+title: "01 准备"
+category: skills
+tags: ["Python", "Web"]
+featured: false
+source: "Python/Python_web/Django_web开发/商城项目后台/01 准备.md"
+updated: 2021-10-22
+readingTime: 1
+summary: "toc 终端进入本地仓库位置 bash 1. 在gitee网页创建仓库 2. git clone https://gitee.com/jcstrong/meiduo_admin23.git 3. 把要上传的文件拖入工作区 cd meiduo..."
+---
+[toc]
+
+终端进入本地仓库位置
+
+```bash
+1. 在gitee网页创建仓库
+2. git clone https://gitee.com/jcstrong/meiduo_admin23.git
+3. 把要上传的文件拖入工作区 cd meiduo_admin23
+4. 将所有文件加入暂存区 git add ./*
+5. 查看状态 git status   
+6. 提交到本地仓库 git commit -m '备注'
+7. 推到远程仓库 git push
+```
+
+pycharm打开工程文件夹
+
+```bash
+1、导入虚拟环境文件  
+	pip install -r ./docs/requeriments.txt
+	
+2、进入数据库创建meiduo数据库  
+	mysql -uroot -p 
+	drop database meiduo;
+	create database meiduo charset=utf8;
+3、导入数据
+ 	mysql -uroot -p meiduo < dump.sql
+4、运行
+	python manage.py runserver
+```
+

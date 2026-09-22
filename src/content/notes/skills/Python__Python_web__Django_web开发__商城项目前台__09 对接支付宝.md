@@ -1,0 +1,100 @@
+---
+title: "09 对接支付宝"
+category: skills
+tags: ["Python", "Web"]
+featured: false
+source: "Python/Python_web/Django_web开发/商城项目前台/09 对接支付宝.md"
+updated: 2022-05-23
+readingTime: 2
+summary: "toc  2. 支付宝开发文档  文档主页：https://openhome.alipay.com/developmentDocument.htm  电脑网站支付产品介绍：https://docs.open.alipay.com/270  ..."
+---
+[toc]
+
+### 2. 支付宝开发文档
+
+- 文档主页：https://openhome.alipay.com/developmentDocument.htm
+
+- 电脑网站支付产品介绍：https://docs.open.alipay.com/270
+
+- 电脑网站支付快速接入：https://docs.open.alipay.com/270/105899/
+
+- API列表：https://docs.open.alipay.com/270/105900/
+
+- SDK文档：https://docs.open.alipay.com/270/106291/
+
+- Python支付宝SDK：
+
+  https://github.com/fzlee/alipay/blob/master/README.zh-hans.md
+
+  - SDK安装：`pip install python-alipay-sdk --upgrade`
+
+![](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211015155623.png)
+
+# RSA公钥和密钥
+
+![对接支付宝公私钥](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211015154727.png)
+
+> **1.生成美多商城公私钥**
+
+```bash
+$ openssl
+$ OpenSSL> genrsa -out app_private_key.pem 2048  # 制作私钥RSA2
+$ OpenSSL> rsa -in app_private_key.pem -pubout -out app_public_key.pem # 导出公钥
+
+$ OpenSSL> exit
+```
+
+> **2.配置美多商城公私钥**
+
+- 配置美多商城私钥
+  - 新建子应用`payment`,在该子应用下新建文件夹`keys`用于存储公私钥。
+  - 将制作的美多商城私钥`app_private_key.pem`拷贝到`keys`文件夹中。
+- 配置美多商城公钥
+  - 将`payment.keys.app_public_key.pem`文件中内容上传到支付宝。
+
+> **3.配置支付宝公钥**
+
+- 将支付宝公钥内容拷贝到`payment.keys.alipay_public_key.pem`文件中。
+
+```
+-----BEGIN PUBLIC KEY-----
+支付宝公钥内容
+-----END PUBLIC KEY-----
+```
+
+> **配置公私钥结束后**
+
+*（图片缺失：09%E7%BE%8E%E5%A4%9A%E5%95%86%E5%9F%8E%E7%9A%84%E5%85%AC%E7%A7%81%E9%92%A5.png）*
+
+
+
+
+
+## RSA key format is not supported
+
+- 在私钥中加如下两句
+
+```
+-----BEGIN RSA PRIVATE KEY-----
+-----END RSA PRIVATE KEY-----
+```
+
+- 把公钥和私钥的内容先读出来，然后再用读出来的内容去创建Alipay对象
+
+```python
+app_private_key=os.path.join(os.path.dirname(os.path.abspath(__file__)), "keys/app_private_key.pem"),
+        alipay_public_key=os.path.join(os.path.dirname(os.path.abspath(__file__)), "keys/alipay_public_key.pem"),
+
+        # 创建支付宝支付SDK对象
+        alipay = AliPay(
+            appid=settings.ALIPAY_APPID,
+            app_notify_url=None,  # 默认回调url
+            app_private_key_string=app_private_key,
+            alipay_public_key_string=alipay_public_key,
+            sign_type="RSA2",
+            debug=settings.ALIPAY_DEBUG
+        )
+```
+
+## TypeError: 'tuple' object cannot be interpreted as an integer
+

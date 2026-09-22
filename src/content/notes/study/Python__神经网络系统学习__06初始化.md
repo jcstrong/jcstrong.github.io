@@ -1,0 +1,19 @@
+---
+title: "06初始化"
+category: study
+tags: ["神经网络", "系统学习"]
+featured: false
+source: "Python/神经网络系统学习/06初始化.md"
+updated: 2022-07-06
+readingTime: 1
+summary: "初始化的重要性https://education.huaweicloud.com/courses/coursev1:HuaweiX+CBUCNXE088+Selfpaced/courseware/5b3b6cd6b90544c2b68e6e..."
+---
+
+
+# [初始化的重要性](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/5b3b6cd6b90544c2b68e6e1c7caba37b/00ba45964ecc461085f6775365ff45de/1)
+
+
+
+
+
+# [Xavier初始化及He初始化](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/5b3b6cd6b90544c2b68e6e1c7caba37b/1dd904f0db2640edb19af195253f00c5/1)

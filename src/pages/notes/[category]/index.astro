@@ -1,0 +1,200 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import NoteCard from '../../../components/NoteCard.vue';
+import CategoryTree from '../../../components/CategoryTree.vue';
+import { getCollection } from 'astro:content';
+import { CATEGORY_META } from '../../../content.config';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+  return Object.keys(CATEGORY_META).map(cat => ({
+    params: { category: cat },
+  }));
+}
+
+const { category } = Astro.params;
+const meta = CATEGORY_META[category as keyof typeof CATEGORY_META];
+
+const allNotes = await getCollection('notes');
+const categoryNotes = allNotes
+  .filter(n => n.data.category === category)
+  .sort((a, b) => new Date(b.data.updated).getTime() - new Date(a.data.updated).getTime());
+
+const categoryStats = Object.entries(CATEGORY_META).map(([id, m]) => {
+  const notes = allNotes.filter(n => n.data.category === id);
+  const tags = [...new Set(notes.flatMap(n => n.data.tags))].slice(0, 8);
+  return { id, label: m.label, count: notes.length, tags };
+});
+
+const notesForRender = categoryNotes.map(n => ({
+  title: n.data.title,
+  slug: n.slug.split('/').slice(1).join('/'),  // 剥离分类前缀，路由已含 category
+  category: n.data.category,
+  tags: n.data.tags,
+  featured: n.data.featured,
+  updated: n.data.updated,
+  readingTime: n.data.readingTime,
+  summary: n.data.summary,
+}));
+---
+
+<BaseLayout title={`${meta.label} · jcstrong.dev`}>
+  <div class="list-page">
+    <div class="list-header">
+      <div class="breadcrumb mono">
+        <a href="/">首页</a> / <span>{meta.label}</span>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search" placeholder={`在 ${categoryNotes.length} 篇笔记中搜索...`} class="search-input" />
+        <span class="search-shortcut mono">⌘ K</span>
+      </div>
+    </div>
+
+    <div class="list-body">
+      <CategoryTree categories={categoryStats} currentCategory={category} />
+
+      <main class="list-main">
+        <div class="list-title-row">
+          <div>
+            <h1 class="list-title">{meta.label}</h1>
+            <p class="list-desc">{categoryNotes.length} 篇 · {meta.description}</p>
+          </div>
+          <div class="sort-options mono">
+            <span class="sort-active">最近更新</span>
+            <span>按字母</span>
+            <span>按阅读量</span>
+          </div>
+        </div>
+
+        <div class="note-list">
+          {notesForRender.map(note => <NoteCard note={note} />)}
+        </div>
+
+        {categoryNotes.length === 0 && (
+          <div class="empty">
+            <p>该分类暂无笔记</p>
+            <p class="mono">运行 <code>npm run sync</code> 同步 Typora 笔记</p>
+          </div>
+        )}
+      </main>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.list-page {
+  min-height: calc(100vh - 100px);
+}
+
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 0.5px solid var(--border-tertiary);
+}
+
+.breadcrumb {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.breadcrumb a {
+  color: var(--text-secondary);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-input {
+  font-size: 12px;
+  padding: 6px 12px;
+  width: 280px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+}
+
+.search-shortcut {
+  font-size: 11px;
+  padding: 4px 8px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+}
+
+.list-body {
+  display: flex;
+  min-height: 500px;
+}
+
+.list-main {
+  flex: 1;
+  padding: 20px 24px;
+}
+
+.list-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+}
+
+.list-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.list-desc {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.sort-options {
+  display: flex;
+  gap: 12px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.sort-active {
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--text-primary);
+  padding-bottom: 2px;
+}
+
+.note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-tertiary);
+  font-size: 13px;
+}
+
+.empty .mono {
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.empty code {
+  background: var(--bg-secondary);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+</style>

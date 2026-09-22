@@ -1,0 +1,216 @@
+---
+title: "深入浅出图神经网络"
+category: study
+tags: ["图神经网络", "读书笔记"]
+featured: false
+source: "Python/深入浅出图神经网络.md"
+updated: 2023-03-08
+readingTime: 6
+summary: "图的概述\r \r 二部图：任意一条边 $e_{ij}$的顶点分别属于A或B就是二部图\r \r <img src=\"https://chenjunxs.osscnhangzhou.aliyuncs.com/image202303021331360..."
+---
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 图的概述
+
+二部图：任意一条边 $e_{ij}$的顶点分别属于A或B就是二部图
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302133136070.png" alt="image-20230302133136070" style="zoom:50%;" />
+
+顶点的度 = 出度 + 入度
+
+顶点的距离：最短路径就是距离<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302133434233.png" alt="image-20230302133434233" style="zoom:30%;" />
+
+![image-20230302133604506](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302133604506.png)
+
+图数据任务分类
+
+- 节点层面（Node Level）
+
+  分类任务和回归任务。如学术上论文节点的分类，工业界在线社交网络中用户标签的分类、恶意账户检测等。
+
+- 边层面（Link Level）
+
+  边的分类和预测任务。边的分类是指对边的某种性质进行预测；边预测是指给定的两个节点之间是否会构成边。常用在推荐业务中。
+
+- 图层面（Graph Level）
+
+- 从图的整体出发，实现分类、表示和生成等任务。如对药物分子的分类，酶的分类
+
+
+
+## 神经网络基础
+https://baifeng.blog.csdn.net/article/details/118788461
+
+### 机器学习 
+
+分类
+
+![](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/2023/03/02/16776928145075.png)
+
+> 离散：0/1、正常/异常、A类/B类/C类
+>
+> 连续：如概率排序
+
+机器学习流程
+
+- 提取商品图片的特征
+  这 个 过 程 称 为 特 征 工 程 ， 也 可 以 使 用 算 法 自 动 提 取（深度学习 ）
+
+- 建立模型
+
+  ![image-20230302150944846](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302150944846.png)
+
+  传统机器学习：逻辑回归、随机森林
+  深度学习：多层感知器、卷积网络
+
+- 确定损失的数和进行优化求解
+  损失函数就是来衡量模型输出与标签之间的差异程度
+
+数学模型：<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302151509912.png" alt="image-20230302151509912" style="zoom:33%;" /> 输入d维向量，经过f映射输出K个类别的概率分布，区取概率最大的作为结果<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302151621358.png" alt="image-20230302151621358" style="zoom:30%;" />
+
+通过比较 <img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302151621358.png" alt="image-20230302151621358" style="zoom:30%;" />和样本实际的标签来评价模型好坏 
+
+损失函数：<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302151747299.png" alt="image-20230302151747299" style="zoom:30%;" />调整 f的参数降低损失函数值，进行优化。持续迭代 ，直到总体损失不再变化或变化极其缓慢为止，这时候，我们可以说该模型已收敛。
+
+![image-20230302152041764](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302152041764.png)
+
+过拟合：训练样本表现完美，但无法应用在新样本 
+
+欠拟合：在训练样本上也无法得到预期结果
+
+### 常见的损失函数 
+
+平方损失函数：常用于回归类问题。
+
+交叉熵损失：(cross entropy)损失常用于分类问题中
+
+
+
+梯 度 下 降算 法
+
+机 器 学 习 中 优 化 的 目 标 是 最 小 化 损 失 两 数 ， 通 过 梯 度 下 降 的 方法 进行 求 解 的 过程 分 为 以 下 几 步， 算 法 过 程 如 下所 示 。 
+
+- 首 先， 通 过 随 机 初 始 化 为 需 要 求 解 的 参 数 赋 初 值，作为优化的起点;
+- 接下来，使用模型对所有样本进行预测，计算总体的损失值; 
+- 然后利用损失值对模型参数进行求导，得到相应的梯度;
+- 最后基于梯度调整参数，得到迭代之后的参数。重复上述过程，直到达到停止条件。
+
+随机梯度下降算法
+
+## 神经网络
+
+神经元包括3 个基本组成部分:输人信号、线性组合和非线性激活函 数
+
+单隐层感知器：输入层、隐藏层、输出层 <img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302153442454.png" alt="image-20230302153442454" style="zoom:30%;" />
+
+b：偏置、w：权值向量、f：激活函数
+
+隐藏层输出：$h(x) = f_1(b^{(1)}+W^{(1)}x)$
+
+
+多层感知器(Multi-Layer Perceptron，MLP)，也称前馈神经网络
+
+感知器的信息传递：输 人 信 号 通 过 不 断 地 进 行 线 性 变 换 ( 线 性 加 权 ) 和 非 线 性 变 换 ( 激 活 两 数 )， 逐渐将输人信号向后一层传递，直到输出层。其中输人层和输出层的神经 元个数 往往是通过先验的知识确定的，而隐藏层中每层的神经元个数以及使用的层数都 是超 参数。
+
+### 激活函数
+
+激活函数：是一种非线性的，可以让神经网络能够逼近任何非线性函数。否则无论多少层最后的输出都是线性的结果
+
+- S型激活函数
+
+  - 特点：有届
+
+- ReLU Rectified Linear Unit<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302183410440.png" alt="image-20230302183410440" style="zoom:30%;" />
+
+  单侧抑制
+
+  - 单侧抑制会为隐藏 层的输出带来一定的稀疏性。同时由于它在输人为正时，输出; 保持不变，梯度为1， 可以缓解梯度消失的问题。
+  - 单侧抑制在某些情况下可能会导致某个神经元“ 死亡”，原因是如果某个神 经元输出妢终为负，那么在进 行反向传播时，其相应的梯度始终为0，导致无法进行 有效的更新
+
+- LeakyReLU<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302183423516.png" alt="image-20230302183423516" style="zoom:30%;" />
+
+  - 避免神经元死亡
+  - ℷ一般取0.2
+
+- PReLu Parametric ReLU<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230302183442839.png" alt="image-20230302183442839" style="zoom:30%;" />
+
+  - 将 LeakyReLU 中 的 超 参 数 入 改 进 为 ==可 以 训 练 的 参 数== ， 并 且 每 个 神 经 元 可 以 使 用不 同 的 参 数 。 
+  - 引入更多参数，但是可以在纬度上共享   
+
+- ELU  指 数 线 性 单 元  E x p o n e n t i a l   L i n e a r  U h i t <img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230303164104704.png" alt="image-20230303164104704" style="zoom:30%;" />
+
+  - L e a k y R e L U 和 P r e L U 在 输 人 为 负 时 ， 进 行 线 性 压 缩，而 E L U 在 输 人 为 负 时 ， 进 行 非 线 性 变 换 
+  - 具有调节激活值的 均值为0 的功能，可以加速神经网 络的收敛。
+
+### 训 练 神 经 网 络
+
+神 经 网 络 的 运 行过 程 
+
+1）前向传播：给定输人和参数，逐层向前进行计算，最后输出预测结果；
+
+2）反向传播：基于前向传播得到的预测结果，使用损失两数得到损失值，然后计算相关参数的梯度，该计算方法称为反向传播 (back-propagation），具体的细节后面将详细介绍；
+
+3）参数更新：使用梯度下降算法对参数进行更新，重复上述过程，逐步迭代，直到模型收敛。
+
+![image-20230303164755124](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20230303164755124.png)
+
+
+
+#### 反向传播
+
+它 基 于 链 式 法 则 快 速 地 计 算 参 数 的 梯 度， 然 后使用梯度下降算法进行参数更新
+
+#### 优化困境
+
+- 梯度消失
+- 局部最优与鞍点
+  - 维度过高会有鞍点。鞍点指 的 是 在 该 处 梯 度 为 0 ( 如 图 2 - 1 1 中 的 b 图 所 示)， 但 是 它 并 不 是 最 小 值 或 者 最 大 值 ，
+
+
+
+
+
+## 卷积神经网络
+
+卷积与池化
+
+卷积：我们称卷积得到的输出为特征图
+池化：池化操作的主要目的是降维，以降低计算量
+
+信号处理中的卷积• ....39 ... 13
+
+3. 1.2 深度学习中的卷积操作
+
+.3 池化⋯•
+3.2 卷积神经网络...
+3.2. 1
+卷积神经网络的结构⋯...... 47 3. 2. 2
+卷积 神经 网络 的 特 点⋯
+... 49 3.3 特殊的卷积形式•
+........51 3.3.1 1x1卷积⋯
+. . . . . 51 3.3.2 转置卷积•
+. . . .52 3.3.3 空洞卷积

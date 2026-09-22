@@ -1,0 +1,16 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@layouts/*": ["src/layouts/*"],
+      "@styles/*": ["src/styles/*"]
+    },
+    "jsx": "preserve",
+    "types": ["unocss/preset-icons", "astro/client"]
+  },
+  "include": ["src/**/*", "*.config.mjs", "*.config.ts"],
+  "exclude": ["dist", "node_modules"]
+}

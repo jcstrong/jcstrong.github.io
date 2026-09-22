@@ -1,0 +1,412 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { CATEGORY_META } from '../../../content.config';
+
+export async function getStaticPaths() {
+  const allNotes = await getCollection('notes');
+  // note.slug 含分类目录前缀（如 practice/xxx），路由已含 category，需剥离
+  const stripCat = (slug: string) => slug.split('/').slice(1).join('/');
+  return allNotes.map(note => ({
+    params: { category: note.data.category, slug: stripCat(note.slug) },
+    props: { note, allNotes },
+  }));
+}
+
+interface Props {
+  note: CollectionEntry<'notes'>;
+  allNotes: CollectionEntry<'notes'>[];
+}
+
+const { note, allNotes } = Astro.props;
+const { Content, headings } = await note.render();
+
+const meta = CATEGORY_META[note.data.category as keyof typeof CATEGORY_META];
+
+const sortedByUpdate = allNotes
+  .filter(n => n.data.category === note.data.category)
+  .sort((a, b) => new Date(b.data.updated).getTime() - new Date(a.data.updated).getTime());
+
+const currentIdx = sortedByUpdate.findIndex(n => n.slug === note.slug);
+const prevNote = currentIdx > 0 ? sortedByUpdate[currentIdx - 1] : null;
+const nextNote = currentIdx < sortedByUpdate.length - 1 ? sortedByUpdate[currentIdx + 1] : null;
+
+const relatedNotes = allNotes
+  .filter(n => n.slug !== note.slug && n.data.tags.some(t => note.data.tags.includes(t)))
+  .slice(0, 3);
+
+const tocItems = headings.filter(h => h.depth === 2 || h.depth === 3);
+const stripCat = (slug: string) => slug.split('/').slice(1).join('/');
+---
+
+<BaseLayout title={`${note.data.title} · jcstrong.dev`} description={note.data.summary}>
+  <div class="detail-page">
+    <div class="detail-header">
+      <div class="breadcrumb mono">
+        <a href="/">首页</a> / <a href={`/notes/${note.data.category}`}>{meta.label}</a>
+      </div>
+      <a href={`/notes/${note.data.category}`} class="back-link">← 返回列表</a>
+    </div>
+
+    <div class="detail-body">
+      <article class="detail-main">
+        <header class="article-header">
+          <h1 class="article-title">{note.data.title}</h1>
+          <div class="article-meta mono">
+            <span>{note.data.updated}</span>
+            <span class="sep">·</span>
+            <span>{note.data.readingTime} min</span>
+            <span class="sep">·</span>
+            <span>{note.data.category}</span>
+          </div>
+          <div class="article-tags">
+            {note.data.tags.map(tag => <span class="tag mono">{tag}</span>)}
+            {note.data.featured && <span class="tag tag-featured">精选</span>}
+          </div>
+        </header>
+
+        <div class="article-content">
+          <Content />
+        </div>
+
+        <nav class="article-nav">
+          {prevNote && (
+            <a href={`/notes/${prevNote.data.category}/${stripCat(prevNote.slug)}`} class="nav-card nav-prev">
+              <span class="nav-label">← 上一篇</span>
+              <span class="nav-title">{prevNote.data.title}</span>
+            </a>
+          )}
+          {nextNote && (
+            <a href={`/notes/${nextNote.data.category}/${stripCat(nextNote.slug)}`} class="nav-card nav-next">
+              <span class="nav-label">下一篇 →</span>
+              <span class="nav-title">{nextNote.data.title}</span>
+            </a>
+          )}
+        </nav>
+
+        {relatedNotes.length > 0 && (
+          <section class="related">
+            <h3 class="related-title">相关笔记</h3>
+            <div class="related-list">
+              {relatedNotes.map(related => (
+                <a href={`/notes/${related.data.category}/${stripCat(related.slug)}`} class="related-card card-hover">
+                  <span class="related-title-text">{related.data.title}</span>
+                  <span class="related-meta mono">{related.data.updated}</span>
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+      </article>
+
+      {tocItems.length > 0 && (
+        <aside class="toc">
+          <div class="toc-title">目录</div>
+          <nav class="toc-list">
+            {tocItems.map(h => (
+              <a href={`#${h.slug}`} class={`toc-item toc-depth-${h.depth}`}>{h.text}</a>
+            ))}
+          </nav>
+        </aside>
+      )}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+.detail-page {
+  padding: 16px 0 48px;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  border-bottom: 0.5px solid var(--border-tertiary);
+}
+
+.breadcrumb {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.breadcrumb a {
+  color: var(--text-secondary);
+}
+
+.back-link {
+  font-size: 12px;
+  color: var(--accent);
+}
+
+.detail-body {
+  display: grid;
+  grid-template-columns: 1fr 200px;
+  gap: 32px;
+  padding: 24px;
+}
+
+.detail-main {
+  min-width: 0;
+}
+
+.article-header {
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 0.5px solid var(--border-tertiary);
+}
+
+.article-title {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.article-meta {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-bottom: 12px;
+}
+
+.sep {
+  margin: 0 6px;
+  color: var(--border-secondary);
+}
+
+.article-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.tag {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.tag-featured {
+  background: var(--accent-light);
+  color: var(--accent-text);
+}
+
+.article-content {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.article-content :global(h2) {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 32px 0 16px;
+  letter-spacing: -0.01em;
+}
+
+.article-content :global(h3) {
+  font-size: 15px;
+  font-weight: 500;
+  margin: 24px 0 12px;
+}
+
+.article-content :global(p) {
+  margin-bottom: 14px;
+}
+
+.article-content :global(ul),
+.article-content :global(ol) {
+  margin: 12px 0 14px 24px;
+}
+
+.article-content :global(li) {
+  margin-bottom: 6px;
+}
+
+.article-content :global(code) {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  background: var(--bg-secondary);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 0.5px solid var(--border-tertiary);
+}
+
+.article-content :global(pre) {
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  overflow-x: auto;
+  margin: 16px 0;
+}
+
+.article-content :global(pre code) {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.article-content :global(blockquote) {
+  border-left: 2px solid var(--accent);
+  padding-left: 16px;
+  margin: 16px 0;
+  color: var(--text-secondary);
+}
+
+.article-content :global(img) {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  margin: 16px 0;
+}
+
+.article-content :global(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.article-content :global(th),
+.article-content :global(td) {
+  border: 0.5px solid var(--border-tertiary);
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 13px;
+}
+
+.article-nav {
+  display: flex;
+  gap: 12px;
+  margin: 48px 0 32px;
+  padding-top: 24px;
+  border-top: 0.5px solid var(--border-tertiary);
+}
+
+.nav-card {
+  flex: 1;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.nav-card:hover {
+  border-color: var(--accent);
+}
+
+.nav-label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.nav-title {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.nav-next {
+  text-align: right;
+}
+
+.related {
+  margin-top: 32px;
+}
+
+.related-title {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.related-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.related-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-tertiary);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.related-title-text {
+  font-size: 13px;
+}
+
+.related-meta {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.toc {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.toc-title {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 12px;
+}
+
+.toc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.toc-item {
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  padding: 2px 4px;
+}
+
+.toc-depth-2 {
+  padding-left: 0;
+}
+
+.toc-depth-3 {
+  padding-left: 12px;
+  font-size: 11px;
+}
+
+.toc-item:hover {
+  color: var(--accent);
+  background: var(--bg-tertiary);
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .detail-body { grid-template-columns: 1fr; }
+  .toc { display: none; }
+  .article-nav { flex-direction: column; }
+}
+</style>

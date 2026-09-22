@@ -1,0 +1,113 @@
+---
+title: "自动测试"
+category: skills
+tags: ["Python", "Web"]
+featured: false
+source: "Python/Python_web/Django_web开发/Django/自动测试.md"
+updated: 2021-09-01
+readingTime: 3
+summary: "toc  测试\tassertIs 进阶的做法是先写测试在进行编程。 polls.model.Question.was_published_recently python def was_published_recentlyself:    ..."
+---
+[toc]
+
+# 测试	assertIs()
+
+进阶的做法是先写测试在进行编程。
+
+polls.model.Question.was_published_recently()
+
+```python
+def was_published_recently(self):
+        # 是不是近一个月的
+        return self.pub_date >= timezone.now() - datetime.timedelta(days=1)
+```
+
+polls.test.py
+
+```python
+class QuestionModelTests(TestCase):
+
+    def test_was_published_recently_with_future_question(self):
+       # returns False for questions whose pub_date is in the future.
+        time = timezone.now() + datetime.timedelta(days=30)
+        future_question = Question(pub_date=time)
+        self.assertIs(future_question.was_published_recently(), False)
+```
+
+> AssertionError: True is not False
+
+自动化测试的运行过程：
+
+- `python manage.py test polls` 将会寻找 `polls` 应用里的测试代码
+- 它找到了 [`django.test.TestCase`](https://docs.djangoproject.com/zh-hans/3.2/topics/testing/tools/#django.test.TestCase) 的一个子类
+- 它创建一个**特殊的数据库**供测试使用
+- 它在类中寻找测试方法——**以 `test` 开头**的方法。
+- 在 `test_was_published_recently_with_future_question` 方法中，它创建了一个 `pub_date` 值为 30 天后的 `Question` 实例。
+- 接着使用 `assertls()` 方法，发现 `was_published_recently()` 返回了 `True`，而我们期望它返回 `False`。
+
+测试系统通知我们哪些测试样例失败了，和造成测试失败的代码所在的行号。
+
+修改bug时，可能会不小心引入另一个 bug，所以要写一个更全面的测试，考虑到所有的的情况
+
+```python
+def test_was_published_recently_with_old_question(self):
+    """
+    was_published_recently() returns False for questions whose pub_date
+    is older than 1 day.
+    """
+    time = timezone.now() - datetime.timedelta(days=1, seconds=1)
+    old_question = Question(pub_date=time)
+    self.assertIs(old_question.was_published_recently(), False)
+
+def test_was_published_recently_with_recent_question(self):
+    """
+    was_published_recently() returns True for questions whose pub_date
+    is within the last day.
+    """
+    time = timezone.now() - datetime.timedelta(hours=23, minutes=59, seconds=59)
+    recent_question = Question(pub_date=time)
+    self.assertIs(recent_question.was_published_recently(), True)
+```
+
+## Client	测试工具
+
+可以在shell里使用
+
+不知道啥意思
+
+```
+from django.test.utils import setup_test_environment
+setup_test_environment()
+from django.test import Client
+client = Client()
+response = client.get('/')
+response.status_code
+
+from django.urls import reverse
+response = client.get((reverse('polls:index')))
+response.status_code
+response.content
+response.context['latest_question_list']
+```
+
+
+
+## 当需要测试的时候，测试用例越多越好[¶](https://docs.djangoproject.com/zh-hans/3.2/intro/tutorial05/#when-testing-more-is-better)
+
+貌似我们的测试多的快要失去控制了。按照这样发展下去，测试代码就要变得比应用的实际代码还要多了。而且测试代码大多都是重复且不优雅的，特别是在和业务代码比起来的时候，这种感觉更加明显。
+
+**但是这没关系！** 就让测试代码继续肆意增长吧。大部分情况下，你写完一个测试之后就可以忘掉它了。在你继续开发的过程中，它会一直默默无闻地为你做贡献的。
+
+但有时测试也需要更新。想象一下如果我们修改了视图，只显示有选项的那些投票，那么只前写的很多测试就都会失败。*但这也明确地告诉了我们哪些测试需要被更新*，所以测试也会测试自己。
+
+最坏的情况是，当你继续开发的时候，发现之前的一些测试现在看来是多余的。但是这也不是什么问题，多做些测试也*不错*。
+
+如果你对测试有个整体规划，那么它们就几乎不会变得混乱。下面有几条好的建议：
+
+- 对于每个模型和视图都建立单独的 `TestClass`
+- 每个测试方法只测试一个功能
+- 给每个测试方法起个能描述其功能的名字
+
+深入代码测试[¶](https://docs.djangoproject.com/zh-hans/3.2/intro/tutorial05/#further-testing)
+
+Django 中的测试[¶](https://docs.djangoproject.com/zh-hans/3.2/topics/testing/#testing-in-django)

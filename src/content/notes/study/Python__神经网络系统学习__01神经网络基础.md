@@ -1,0 +1,288 @@
+---
+title: "01神经网络基础"
+category: study
+tags: ["神经网络", "系统学习"]
+featured: false
+source: "Python/神经网络系统学习/01神经网络基础.md"
+updated: 2023-03-03
+readingTime: 9
+summary: "神经网络基础概念 toc huawei云培训中心：神经网络基础概念 huawei云培训中心： 深度学习DeepLearning，DL属于机器学习的子类。是利用深度神经网络来解决特征表达的一种学习过程 安装PyTorch\tpip3 insta..."
+---
+# 神经网络基础概念
+
+
+
+[[toc]]
+
+
+
+huawei云培训中心：神经网络基础概念
+
+huawei云培训中心：
+
+深度学习(DeepLearning，DL)属于机器学习的子类。是利用深度神经网络来解决特征表达的一种学习过程
+
+
+
+安装PyTorch	`pip3 install torch torchvision`
+
+[操作张量](https://authoring-modelarts-cnnorth4.huaweicloud.com/console/lab/workspaces/auto-B?share-url-b64=aHR0cHM6Ly9tb2RlbGFydHMtbGFicy1iajQub2JzLmNuLW5vcnRoLTQubXlodWF3ZWljbG91ZC5jb20vY291cnNlL2h3Y19lZHUvcHl0aG9uX21vZHVsZV9mcmFtZXdvcmsvZm9yX2h3Y19lZHUvUHlUb3JjaF9od2NfZWR1LmlweW5i&clone)
+
+[MNIST数据库](http://yann.lecun.com/exdb/mnist/)
+
+[手写数字识别任务简介](https://authoring-modelarts-cnnorth4.huaweicloud.com/console/lab/workspaces/auto-B?share-url-b64=aHR0cHM6Ly9tb2RlbGFydHMtbGFicy1iajQub2JzLmNuLW5vcnRoLTQubXlodWF3ZWljbG91ZC5jb20vY291cnNlL2h3Y19lZHUvcHl0aG9uX21vZHVsZV9mcmFtZXdvcmsvZm9yX2h3Y19lZHUvUHlUb3JjaF9od2NfZWR1LmlweW5i&clone)
+
+
+
+## [神经元](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/7fabbe3faa8e441fa91877a636f7e35d/)
+
+- 生物神经元
+
+  - 分类
+
+    - 感觉神经元：（输入）分布在体外，传递兴奋到脊髓和脑
+    - 运动神经元：（输出）轴突可达到肌肉和腺体，控制活动
+    - 联络神经元：神经元之间联系
+
+  - 特性
+
+    - 兴奋性：达到某个阈值才会激活 激活函数 $∅(*)$
+    - 传导性：相邻神经元传递冲动时，会有一个权值 $w$
+    - 时空整合特性： $∑$
+
+    ![Screenshot 2021-11-18 at 12.33.44 PM](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118123352.png)
+
+Artificial Neural Network
+
+前馈网络：卷积神经网络CNN
+
+反馈网络：循环神经网络RNN。中间结点是有记忆功能的
+
+知识图谱：图网络
+
+![Screenshot 2021-11-18 at 12.36.14 PM](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118123638.png)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## [感知机](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/3b078d4c13794ca999588127b3b3aa6d/)
+
+单层感知机，本质上是一个二分类器
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118123953.png" alt="Screenshot 2021-11-18 at 12.39.47 PM" style="zoom:50%;" />
+
+单层感知机解决OR二分类问题
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118124303.png" alt="Screenshot 2021-11-18 at 12.42.01 PM" style="zoom: 25%;" />
+
+单层感知机无法通过一条线分割1和-1，所以是没法解决XOR异或问题的
+
+加入隐藏层来解决XOR
+
+![Screenshot 2021-11-18 at 12.45.08 PM](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118124545.png)
+
+隐藏层数越多，分类能力越强、特征表达能力越强
+
+- 神经网络在感知器的模型上做了以下三点的扩张 :
+  - 增加网络层数 : 加入隐藏层，隐藏层可以有多层，增强模型的表达能力
+  - 增加每层网络的神经元数量 : 输出层的神经元也可以不止一个，可以有多个输出，模型就可以灵活的应用于分类回归，以及其他的机器学习领域比如降维和聚类等。
+  - 调整激活函数：对激活函数做扩展，包括Sigmoid函数，Softmax和ReLU等。
+
+## [激活函数](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/e53fc9d3d4924a0fa6fbc1b31d6cf4f1/)
+
+引入了非线性
+
+常见的激活函数（虚线是导函数）
+
+![Screenshot 2021-11-18 at 1.01.50 PM](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118130205.png)
+
+Sigmoid函数：单调连续，求导简单，输出有界；但是两端导数趋于0，造成的弊端就是5层之内就会产生梯度退化为0的现象，难以训练。
+
+Tanh函数：输出在（-1，1），变化更敏感，容错性好
+
+Softsign函数：两端更平坦，消失的更慢，所以可以更高效的学习。但是导数求解较困难
+
+![image-20211118131802803](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118131802.png)
+
+ReLU函数：求导简单、转折点不可导、无上界会导致训练发散
+
+SoftPlus函数：更相似于脑神经
+
+Softmax函数：
+
+激活函数的选择指标：非线性、连续可微性（梯度优化）、有界性（提度训练更稳定）、单调性（损失函数）、平滑性（泛化效果更好）
+
+
+
+## [信息前向传播及损失函数](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/d1f96a5199cd4365a4c10a304e062d55/)
+
+![信息前向传播](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118132751.png)
+
+
+
+**损失函数 ( loss function )** 
+
+用来估量你模型的预测值$f(x)$与真实值$Y$不一致程度，它是一个非负实值函数,通常使用$L(Y, f(x))$来表示，损失函数越小，模型的鲁棒性就越好。
+
+常用的损失函数
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118133245.png" alt="image-20211118133244975" style="zoom:33%;" />
+
+$o_d$是实际概率分布、 $t_d$是预测概率分布
+
+均方误差更多得用于回归问题，
+交叉熵误差更多的用于分类问题。
+交叉熵误差刻画了两个概率分布之间的距离，是分类问题中使用较多的一种损失函数。
+
+损失函数的极值：为了得到是损失函数 $E(W)$ 最小的权值向量 $W$。但由于$E(W)$ 是一个复杂的高维曲面，数学上没有求极值的方法。这里可以通过梯度下降法
+
+梯度下降法
+
+梯度：使函数上升最快的方向							<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118134406.png" alt="image-20211118134406830" style="zoom:25%;" />
+
+全局梯度下降算法 : 收敛过程非常慢 ，因为每次更新权值都需要计算所有的训练样例
+
+随机梯度下降算法 : 难以收敛到极值。
+
+小批量梯度下降 : 兼顾了效率和梯度的稳定性，容易冲过局部极小值，是实际工作中最常用的梯度下降算法
+
+## [误差反向传播](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/d1d8e23825be405f9c9914c5d96311a7/)
+
+误差反向传播算法使用链式求导法则将输出层的误差反向传回给网络，使神经网络的权重有了==较简单的梯度计算实现方法==。
+
+
+
+步骤：
+
+- 从最后一层开始，计算误差对于该层节点参数的梯度
+
+- 基于上一层的梯度值，对当前层参数的梯度值进行计算，重复该步又，将参数传播至第一
+  层
+
+![image-20211118140631569](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118140631.png)
+
+![image-20211118140644926](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118140644.png)
+
+
+
+## [卷积神经网络 CNN](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/8b8f8068bfa64d8bb6c4fefb98d46a6b/)
+
+Convolutional Neural Network 	CNN是一种前馈神经网络
+
+适用图片处理等与时间非强相关的信息
+
+CNN避免了对图像的复杂前期预处理，可直接输入原始图像
+
+包括：卷积层、池化层、全连接层
+includes: conveolution layer, pooling layer, fully connected layer
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118141145.png" alt="image-20211118141145163" style="zoom: 50%;" />
+
+- 多核卷积层：通过不同的卷积核提取图像的局部特征信息。 
+
+- 池化层：降低特征图参数量、保留图像显著特征、降低过拟合、扩大感知野和解决图像不变性。
+
+  - 池化一般分为最大池化和平均池化。
+
+    - 最大池化：stride:步长
+
+      <img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118143821.png" alt="image-20211118143821679" style="zoom: 33%;" />
+
+- 全连接层：用来将最后得到的特征 映射到线性可分的空间，在整个卷积神经网络起到分类器的作用
+
+
+
+在信号线性系统中分为： 信号反转、求积、求和 三个步骤
+
+深度学习中：d是通道数
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118141328.png" alt="image-20211118141328052" style="zoom: 50%;" />
+
+### 单核卷积过程
+
+黄色：卷积核
+
+绿色：输入图像
+
+卷积核与输入先求积，再求和得到粉色区域
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118141723.png" alt="image-20211118141723034" style="zoom:50%;" />
+
+### 多核卷积
+
+Zero padding：通过用0填充边缘，确保输入图片大小一致
+
+两个卷积核得到两个特征图
+
+![image-20211118142242898](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118142242.png)
+
+### CNN核心思想：局部感知
+
+- 一般认为人对外界的认知是**从局部到全局**的，图像像素点的空间联系也是局部的像素联系较为紧密，而距离较远的像素相关性则较弱。
+- 在CNN中，每个神经元只需要收集局部信息。
+  - 实现方式 : 使kernel的尺寸远小于输入图像的尺寸。
+  - 优点 :
+    - 减少内存需求 ;
+    -  模拟视觉皮层中的神经元，每个神经元一次只收集局部信息。 
+
+### CNN核心思想：参数共享
+
+- 图像不变性：同一图像在不同位置、不同角度的旋转、不同大小、不同光照等条件下，都会被识别为同一物体
+  - 实现方式 : 用参数相同的kernel去扫描整幅图像
+
+- 优点:
+  - 解决图像位置不变性的问题 ;
+  - 减少计算和内存需求。
+
+## [循环神经网络 RNN](https://education.huaweicloud.com/courses/course-v1:HuaweiX+CBUCNXE088+Self-paced/courseware/2aaefc7acffd43ab8eff5cacce98998b/174259fb8791458390a348ff2ee9bcdd/)
+
+循环神经网络 ( Recurrent Neural Network，简称RNN ) 是一种通过隐藏层节点周期性的连接，来捕捉序列化数据中动态信息的神经网络，可以对序列化的数据进行分类。
+
+序列数据具有上下文相关性，处理的时候不能单靠当前的输入进行判断。 
+
+x：输入；o：输出；s：隐藏单元
+
+​						按照时间展开：
+
+![image-20211118152035053](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118152035.png)
+
+many to one：生成图片描述
+
+one to many：生成视频描述
+
+many to many ：机器翻译、语音识别
+
+标准RNN结构：
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118152421.png" alt="image-20211118152421497" style="zoom:50%;" />
+
+双向循环神经网络
+
+<img src="https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118152548.png" alt="image-20211118152548425" style="zoom:50%;" /> 
+
+多层双向循环神经网络
+
+![image-20211118152626614](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/img/20211118152626.png)
+
+ BPTT（back-propagation through time）算法是常用的训练RNN的方法。本质还是BP算法，只不过RNN处理时间序列数据，所以要基于时间反向传播，故叫随时间反向传播
+
+- 标准RNN结构的问题 :
+  - 解决了信息记忆的问题，但是对长时间记忆的信息会嘉减。很多任务需要保存长时间
+    的记忆信息，如推理小说开头埋下的伏笔，可能到结尾时候才解答。
+  - 基本的循环神经存在梯度爆炸和梯度消失问题，并不能真正的处理好长距离的依赖
+
+​            
+
+​            
+

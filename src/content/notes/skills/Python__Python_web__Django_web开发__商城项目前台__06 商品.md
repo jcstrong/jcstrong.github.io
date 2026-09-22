@@ -1,0 +1,430 @@
+---
+title: "06 商品"
+category: skills
+tags: ["Python", "Web"]
+featured: false
+source: "Python/Python_web/Django_web开发/商城项目前台/06 商品.md"
+updated: 2022-05-27
+readingTime: 10
+summary: "toc SPU = Standard Product Unit （标准产品单位） 如 iPhone Xs SKU = Stock Keeping Unit （库存量单位） 如 iPhone Xs 全网通 黑色 256G SPUSKU是一对多..."
+---
+[toc]
+
+**SPU = Standard Product Unit （标准产品单位）**
+
+如 iPhone Xs
+
+**SKU = Stock Keeping Unit （库存量单位）**
+
+如 iPhone Xs 全网通 黑色 256G
+
+**SPU-SKU是一对多的关系**
+
+
+
+- 广告数据库表
+
+  广告类别和广告内容两个表是一对多的关系
+
+- 商品信息数据库表
+
+
+
+# 文件存储服务 FastDFS
+
+网页中的图片如果都存储在项目中的static文件夹里会拖慢Django，可以选择存储在第三方的云图库中，但更方便管理更经济的是自己搭建文件存储服务器。
+
+- FastDFS介绍
+  - 开源、轻量级、分布式文件系统。
+  - 功能包括：文件存储、文件访问（文件上传、文件下载）、文件同步等
+  - 解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。为互联网量身定制，充分考虑了冗余备份、负载均衡、线性扩容等机制，并注重高可用、高性能等指标。
+  - 可以帮助我们搭建一套高性能的文件服务器集群，并提供文件上传、下载等服务。
+
+
+
+
+
+
+
+*FastDFS* *架构包括 Tracker server* *和 Storage server*
+
+客户端请求 Tracker server *进行文件上传、下载，通过 Tracker server* *调度最终由 Storage server* *完成文件上传和下载。*
+
+
+
+*服务端两个角色：*
+
+Tracker
+
+- *Tracker server* *作用是负载均衡和调度，通过 Tracker server* *在文件上传时可以根据一些策略找到 Storage server* *提供文件上传服务。可以将 tracker* *称为追踪服务器或调度服务器。*
+
+- 管理集群，tracker* *也可以实现集群。每个 tracker* *节点地位平等。收集 Storage* *集群的状态。*
+
+Storage
+
+- *Storage server* *作用是文件存储，客户端上传的文件最终存储在 Storage* *服务器上，Storageserver* *没有实现自己的文件系统而是利用操作系统* *的文件系统来管理文件。可以将storage**称为存储服务器。*
+- 实际保存文件  Storage *分为多个组，每个组之间保存的文件是不同的。每个组内部可以有多个成员，组成员内部保存的内容是一样的，组成员的地位是一致的，没有主从的概念。*
+
+![image-20220527094723046](https://chenjun-xs.oss-cn-hangzhou.aliyuncs.com/image-20220527094723046.png)
+
+
+
+fastDFS安装繁琐，使用Docker容器化方案
+
+
+
+# Docker
+
+避免 相同的工作重复做 是容器化技术应用之一。
+
+- Docker 也是轻量级的应用容器框架。
+
+- Docker 可以打包、发布、运行任何的应用。
+
+- Docker 就像一个盒子，里面可以装很多物件，如果需要某些物件，可以直接将该盒子拿走，而不需要从该盒子中一件一件的取。
+
+- Docker 是一个 客户端-服务端(C/S) 架构程序。
+
+  - 客户端只需要向服务端发出请求，服务端处理完请求后会返回结果。
+
+[Docker中文社区文档](http://www.docker.org.cn/index.html)
+
+
+
+## Docker三个基本概念
+
+- 镜像（Image）
+  - Docker的镜像概念类似于虚拟机里的镜像，是一个只读的模板，一个独立的文件系统，包括运行容器所需的数据，可以用来创建新的容器。
+  - 例如：一个镜像可以包含一个完整的 ubuntu 操作系统环境，里面仅安装了MySQL或用户需要的其它应用程序。
+- 容器（Container）
+  - Docker容器是由Docker镜像创建的运行实例，类似VM虚拟机，支持启动，停止，删除等。
+  - 每个容器间是相互隔离的，容器中会运行特定的应用，包含特定应用的代码及所需的依赖文件。
+- [仓库（Repository）](https://hub.docker.com/)
+  - Docker的仓库功能类似于Github，是用于托管镜像的。
+
+
+
+## Docker安装（centos）
+
+- ```bash
+  curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun
+  ```
+
+- 启动
+
+  ```bash
+  # 启动docker
+  $ sudo service docker start
+  # 重启docker
+  $ sudo service docker restart
+  # 停止docker
+  $ sudo service docker stop
+  ```
+
+- 报错：
+
+  ```bash
+  runc: symbol lookup error: runc: undefined symbol: seccomp_api_get
+  docker: Error response from daemon: cannot start a stopped process: unknown.
+  ```
+
+  解决：安装依赖
+
+  `yum install libseccomp-devel`
+
+- 测试
+
+  ```bash
+  sudo docker run hello-world
+  ```
+
+
+
+### 镜像常用操作
+
+- 查看镜像列表
+
+  ```bash
+  sudo docker image ls
+  ```
+
+- 从仓库拉取镜像
+
+  ```bash
+  # 官方镜像
+  sudo docker image pull ubuntu(镜像名称)
+  sudo docker image pull library/ubuntu()
+  # 指定版本
+  sudo docker image pull library/ubuntu:16.04()
+  
+  # 个人镜像
+  sudo docker image pull 仓库名称/镜像名称
+  sudo docker image pull itcast/fastdfs
+  ```
+
+- 删除镜像
+
+  ```bash
+  sudo docker image rm 镜像名或镜像ID
+  ```
+
+### 容器常用操作
+
+- 查看容器列表
+
+  ```bash
+  # 查看正在运行的容器
+  $ sudo docker container ls
+  # 查看所有的容器
+  $ sudo docker container ls --all
+  ```
+
+- 创建容器
+
+  ```bash
+  $ sudo docker run [option] 镜像名 [向启动容器中传入的命令]
+  ```
+  
+  * -i 表示以《交互模式》运行容器。
+  * -t 表示容器启动后会进入其命令行。加入这两个参数后，容器创建就能登录进去。即分配一个伪终端。
+  * --name 为创建的容器命名。
+  * -v 表示目录映射关系，即宿主机目录:容器中目录。注意:最好做目录映射，在宿主机上做修改，然后共享到容器上。 
+  * -d 会创建一个守护式容器在后台运行(这样创建容器后不会自动登录容器)。 
+  * -p 表示端口映射，即宿主机端口:容器中端口。
+  * --network=host 表示将主机的网络环境映射到容器中，使容器的网络与主机相同。
+
+- 交互式容器
+
+  ```bash
+  $ sudo docker run -it --name=ubuntu1 ubuntu /bin/bash
+  ```
+
+  ```
+  在容器中可以随意执行linux命令，就是一个ubuntu的环境。
+  当执行 exit 命令退出时，该容器随之停止。
+  ```
+
+- 守护式容器
+
+  ```bash
+  # 开启守护式容器	后台运行
+  $ sudo docker run -dit --name=ubuntu2 ubuntu
+  ```
+
+  ```bash
+  # 进入到容器内部交互环境
+  $ sudo docker exec -it 容器名或容器id 进入后执行的第一个命令
+  $ sudo docker exec -it ubuntu2 /bin/bash
+  ```
+
+  如果对于一个需要长期运行的容器来说，我们可以创建一个守护式容器。
+  在容器内部执行 exit 命令退出时，该容器也随之停止。
+
+- 停止和启动容器
+
+  ```bash
+  # 停止容器
+  $ sudo docker container stop 容器名或容器id
+  # kill掉容器
+  $ sudo docker container kill 容器名或容器id
+  # 启动容器
+  $ sudo docker container restart 容器名或容器id
+  # 删除
+  $ sudo docker container rm 容器名或容器id
+  ```
+
+- 容器制作成镜像
+
+  打包成镜像后可以重复利用 已经配置完成的环境
+
+  ```bash
+  # 将容器制作成镜像
+  $ sudo docker commit 容器名 镜像名
+  ```
+
+  ```bash
+  # 镜像打包备份
+  $ sudo docker save -o 保存的文件名 镜像名
+  ```
+
+  ```bash
+  # 镜像解压
+  $ sudo docker load -i 文件路径/备份文件
+  ```
+
+
+
+# 案例：Docker安装FastDFS，实现文件上传下载
+
+美多商城前台项目/笔记/goods/prepare-goods-data/implementation-file-storage-download.html
+
+**获取fastdfs镜像**
+
+```bash
+# 从仓库拉取镜像
+$ sudo docker image pull delron/fastdfs
+# 解压教学资料中本地镜像
+$ sudo docker load -i 文件路径/fastdfs_docker.tar
+```
+
+**开启fastdfs tracker容器**
+
+```bash
+sudo docker run -dit --name tracker --network=host -v /var/fdfs/tracker:/var/fdfs delron/fastdfs tracker
+```
+
+**开启fastdfs storage容器**
+
+```bash
+sudo docker run -dti --name storage --network=host -e TRACKER_SERVER=121.41.31.167:22122 -v /var/fdfs/storage:/var/fdfs delron/fastdfs storage
+```
+
+注意：如果无法重启storage容器，可以删除`/var/fdfs/storage/data`目录下的`fdfs_storaged.pid`文件，然后重新运行storage。
+
+**安装fastdfs client扩展**
+
+[Python版本的FastDFS客户端使用参考文档](https://github.com/jefforeilly/fdfs_client-py)
+
+```bash
+$ pip install fdfs_client-py-master.zip
+$ pip install mutagen
+$ pip isntall requests
+```
+
+**准备FastDFS客户端扩展的配置文件**
+
+`meiduo_mall.utils.fastdfs.client.conf`
+
+```python
+base_path=FastDFS客户端存放日志文件的目录
+tracker_server=运行Tracker服务的机器ip:22122
+```
+
+**FastDFS客户端实现文件存储**
+
+[阿里云部署FastDFS注意事项](https://blog.csdn.net/qq_25590283/article/details/107121119)
+
+```shell
+# 使用 shell 进入 Python交互环境
+$ python manage.py shell
+# 1. 导入FastDFS客户端扩展
+from fdfs_client.client import Fdfs_client
+# _compat文件是在_senf目录下,要去site-packages/fdfs_client/util.py中修改
+# 2. 创建FastDFS客户端实例
+client = Fdfs_client('meiduo_mall/utils/fastdfs/client.conf')
+# 3. 调用FastDFS客户端上传文件方法
+ret = client.upload_by_filename('/Users/zhangjie/Desktop/kk.jpeg')
+```
+```bash
+ret
+{'Group name': 'Storage组名',
+'Remote file_id': '文件索引，可用于下载',
+'Status': '文件上传结果反馈',
+'Local file name': '上传文件全路径',
+'Uploaded size': '文件大小',
+'Storage IP': 'Storage地址'}
+```
+
+**浏览器下载并渲染图片**
+
+> 思考：如何才能找到在Storage中存储的图片？
+
+- 协议http
+
+- IP地址
+  - `Nginx`服务器的IP地址。
+  - 因为 FastDFS 擅长存储静态文件，但是不擅长提供静态文件的下载服务，所以我们一般会将 Nginx 服务器绑定到 Storage ，提升下载性能。
+
+- 端口8888
+  - `Nginx`服务器的端口。
+
+- 路径
+  `group1/M00/00/00/wKhnnlxw_gmAcoWmAAEXU5wmjPs35.jpeg`
+  - 文件在Storage上的文件索引。
+  
+- 完整图片下载地址
+  `http://192.168.103.158:8888/group1/M00/00/00/wKhnnlxw_gmAcoWmAAEXU5wmjPs35.jpeg`
+
+> 编写测试代码：`meiduo_mall.utils.fdfs_t.html`
+>
+> ```html
+> <img src="http://192.168.103.158:8888/group1/M00/00/00/wKhnnlxw_gmAcoWmAAEXU5wmjPs35.jpeg" width="320" height="480">
+> ```
+
+
+
+# 商品检索
+
+> 商品搜索实现
+
+- 可以选择使用模糊查询`like`关键字实现。
+- 但是 like 关键字的效率极低。
+- 查询需要在多个字段中进行，使用 like 关键字也不方便。
+
+> 全文检索方案
+
+- 我们引入**全文检索**的方案来实现商品搜索。
+- **全文检索即在指定的任意字段中进行检索查询。**
+- **全文检索方案需要配合搜索引擎来实现。**
+
+> 搜索引擎原理
+
+- **搜索引擎**进行全文检索时，会对数据库中的数据进行一遍预处理，单独建立起一份**索引结构数据**。
+- 索引结构数据**类似新华字典的索引检索页**，里面包含了关键词与词条的对应关系，并记录词条的位置。
+- 搜索引擎进行全文检索时，将**关键字在索引数据中进行快速对比查找，进而找到数据的真实存储位置**。
+
+## **Elasticsearch**搜索引擎
+
+> **分词说明**
+
+- 搜索引擎在对数据构建索引时，需要进行分词处理。
+- 分词是指将一句话拆解成**多个单字** 或 **词**，这些字或词便是这句话的关键词。
+- 比如：我是中国人
+  - 分词后：`我`、`是`、`中`、`国`、`人`、`中国`等等都可以是这句话的关键字。
+- [Elasticsearch](https://www.elastic.co/) 不支持对中文进行分词建立索引，需要**配合扩展**`elasticsearch-analysis-ik`来实现中文分词处理。
+
+[Docker安装Elasticsearch](https://blog.csdn.net/qq_32101993/article/details/100021002)
+
+> **1.获取Elasticsearch-ik镜像**
+
+```bash
+# 从仓库拉取镜像
+$ sudo docker image pull delron/elasticsearch-ik:2.4.6-1.0
+# 解压教学资料中本地镜像
+$ sudo docker load -i elasticsearch-ik-2.4.6_docker.tar
+# 查看images
+$ docker images
+# 运行容器
+$ docker run -d --name es2 -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" IMAGEID
+# 查看容器
+$ docker ps   # 列出正在运行的容器
+$ docker ps -a    # 列出所有容器，包括未运行的
+# 配置Elasticsearch-ik
+$ docker exec -it es2 /bin/bash
+# 更改ip地址
+$ vim config/elasticsearch.yml
+```
+
+> **这里使用vim和vi命令，都提示"没有发现这个命令"，这是因为Docker容器内部没有安装。**
+>
+> ```bash
+> $ apt-get update  # 获取最新的软件包
+> $ apt-get install vim   # 下载
+> ```
+>
+> **执行`docker exec`之后要退出docker**
+
+**运行Elasticsearch-ik**
+
+```bash
+$ sudo docker run -dti --name=elasticsearch --network=host -v /home/python/elasticsearch-2.4.6/config:/usr/share/elasticsearch/config delron/elasticsearch-ik:2.4.6-1.0
+```
+
+## Haystack框架
+
+- Haystack在Django中对接搜索引擎的框架，搭建了用户和搜索引擎之间的沟通桥梁。
+  - 我们在Django中可以通过使用 Haystack 来调用 Elasticsearch 搜索引擎。
+- Haystack 可以在不修改代码的情况下使用不同的搜索后端（比如 `Elasticsearch`、`Whoosh`、`Solr`等等）。
+
+[阶段4-web开发/8商城项目/美多商城前台项目/笔记/goods/goods-search/haystack-create-index.html]()
+
