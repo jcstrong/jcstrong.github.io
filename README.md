@@ -2,6 +2,20 @@
 
 > Java 后端 / AI 智能体工程师的笔记档案 · 严肃 editorial 风格
 
+## 🤖 接手这个项目？（AI Agent 必读）
+
+**完整接手指引见 [`AGENTS.md`](./AGENTS.md)**，包含环境事实、部署拓扑、目录地图、不可破坏的约定、常见任务 SOP、报错对照表和验收清单。
+
+读它之前先记住 5 条最容易踩的：
+
+1. **源码在 `homepage` 分支，`master` 分支是 PicGo 图床——不要动 master**；CI 会同时检出两个分支，把图床目录合并进部署产物
+2. **笔记产物要提交进仓库**：`npm run sync` 生成 `src/content/notes/**`，CI 里没有 Typora 目录，不提交就构建不出来
+3. **命令必须带 `cd`**：`cd homepage && npm run xxx`（历史踩坑：漏掉 cd 导致在 workspace 根目录执行）
+4. **`gh` 不在 PATH**：用 `/Users/chenjun/.local/bin/gh`；首次推送前需要 `gh auth setup-git`
+5. **密钥脱敏不能绕过**：笔记里有真实密钥，`redactSecrets()` 是唯一防线，GitHub Push Protection 也会直接拒绝 push
+
+---
+
 ## 技术栈
 
 - **Astro 4** - SSG 框架，Islands Architecture，零 JS by default
