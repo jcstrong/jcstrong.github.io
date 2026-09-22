@@ -29,8 +29,9 @@
 1. **落盘镜像**：`src/content/notes/<板块>/<原文件夹路径>/<文件>.md`，因此页面 URL 自带层级语义，例如
    `/notes/skills/Python/Python_web/Django_web开发/Django/xxx/`
 2. **frontmatter**：每篇笔记写入 `folderPath`（如 `Python/Python_web/Django_web开发`）与 `folderTop`（顶层目录）
-3. **树状分区**：`src/lib/tree.ts` 依据 `folderPath` 还原树（含各节点递归计数），侧边栏 `CategoryTree.vue` 渲染为可折叠树，点击即筛选右侧列表（客户端完成，无需后端）
-4. **面包屑**：详情页展示完整目录层级，每一级可点击跳回带筛选的列表（`#folder=...`）
+3. **树状分区（下探到文件级）**：`src/lib/tree.ts` 依据 `folderPath` 还原树（含各节点递归计数），`toNavTree()` 生成精简导航树、`flattenNav()` 按展开状态推导可见项。侧边栏 `CategoryTree.vue` 渲染 **文件夹 → 文件** 完整层级：文件夹点击即筛选，文件点击直接进详情页；默认展开顶层文件夹，因此文件夹下的笔记标题立即可见
+4. **根目录分组**：直接位于板块根下的散装笔记（如 `电商问数.md`）归入「根目录」分组（内部路径常量 `__root__`，筛选时按 `folderPath === ''` 匹配）
+5. **面包屑**：详情页展示完整目录层级，每一级可点击跳回带筛选的列表（`#folder=...`）
 
 ### 排序与筛选
 
