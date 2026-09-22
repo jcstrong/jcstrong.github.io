@@ -27,6 +27,8 @@ export interface TreeNode {
   /** 直接挂在该文件夹下的笔记数 */
   directCount: number;
   children: TreeNode[];
+  /** 直接挂在该文件夹下的笔记（文件级节点） */
+  notes: TreeNote[];
 }
 
 /** 剥离分类前缀：collection slug 形如 skills/Python/xxx.md */
@@ -39,7 +41,7 @@ export function stripCategory(slug: string): string {
  * @param notes 同一板块下的笔记
  */
 export function buildFolderTree(notes: TreeNote[]): TreeNode {
-  const root: TreeNode = { name: '', path: '', count: 0, directCount: 0, children: [] };
+  const root: TreeNode = { name: '', path: '', count: 0, directCount: 0, children: [], notes: [] };
 
   for (const note of notes) {
     const segments = note.folderPath ? note.folderPath.split('/') : [];
@@ -55,6 +57,7 @@ export function buildFolderTree(notes: TreeNote[]): TreeNode {
           count: 0,
           directCount: 0,
           children: [],
+          notes: [],
         };
         cursor.children.push(next);
       }
@@ -62,11 +65,15 @@ export function buildFolderTree(notes: TreeNote[]): TreeNode {
       cursor = next;
     }
     cursor.directCount++;
+    cursor.notes.push(note);
   }
 
   sortTree(root);
   return root;
 }
+
+/** 根目录分组用的伪路径（notes 直接位于板块根下时使用） */
+export const ROOT_FOLDER = '__root__';
 
 /** 文件夹排序：有子目录的优先，再按笔记数降序，最后按名称 */
 function sortTree(node: TreeNode): void {
@@ -77,17 +84,99 @@ function sortTree(node: TreeNode): void {
   node.children.forEach(sortTree);
 }
 
-/** 扁平化树（用于渲染带缩进的列表） */
-export interface FlatTreeNode extends TreeNode {
+/**
+ * 侧边栏导航项：文件夹节点 + 文件（笔记）节点
+ * 文件夹在前、文件在后，形成完整的「文件夹 → 文件」层级导航
+ */
+export interface NavItem {
+  kind: 'folder' | 'note';
+  /** 显示名：文件夹名 / 笔记标题 */
+  name: string;
+  /** 文件夹：自身路径；笔记项：所属文件夹路径（用于祖先可见性判断） */
+  path: string;
   depth: number;
+  /** 文件夹：递归笔记数；笔记项固定 1 */
+  count: number;
+  /** 是否有可展开内容（子文件夹或直属笔记） */
+  expandable: boolean;
+  /** 笔记项专属：详情页链接 */
+  href?: string;
+  /** 笔记项专属：所属文件夹路径（篩选用） */
+  folderPath?: string;
 }
 
-export function flattenTree(node: TreeNode, depth = 0, out: FlatTreeNode[] = []): FlatTreeNode[] {
-  for (const child of node.children) {
-    out.push({ ...child, depth });
-    flattenTree(child, depth + 1, out);
+/** 精简导航树：只带侧边栏需要的字段，控制传给 island 的 props 体积 */
+export interface NavFolder {
+  name: string;
+  path: string;
+  count: number;
+  children: NavFolder[];
+  notes: { title: string; href: string }[];
+}
+
+/** 由完整树生成精简导航树（含根目录分组） */
+export function toNavTree(tree: TreeNode): NavFolder[] {
+  const folders: NavFolder[] = tree.children.map(convert);
+
+  // 板块根目录下的散装笔记单独成组
+  if (tree.notes.length) {
+    folders.push({
+      name: '根目录',
+      path: ROOT_FOLDER,
+      count: tree.notes.length,
+      children: [],
+      notes: tree.notes.map(n => ({ title: n.title, href: `/notes/${n.category}/${n.slug}` })),
+    });
   }
-  return out;
+  return folders;
+}
+
+function convert(node: TreeNode): NavFolder {
+  return {
+    name: node.name,
+    path: node.path,
+    count: node.count,
+    children: node.children.map(convert),
+    notes: node.notes.map(n => ({ title: n.title, href: `/notes/${n.category}/${n.slug}` })),
+  };
+}
+
+/** 依据展开状态生成可见导航项（文件夹在前、文件在后） */
+export function flattenNav(folders: NavFolder[], openPaths: Set<string>): NavItem[] {
+  const items: NavItem[] = [];
+  walkNav(folders, 0, openPaths, items);
+  return items;
+}
+
+function walkNav(folders: NavFolder[], depth: number, openPaths: Set<string>, out: NavItem[]): void {
+  for (const folder of folders) {
+    const expandable = folder.children.length > 0 || folder.notes.length > 0;
+    out.push({
+      kind: 'folder',
+      name: folder.name,
+      path: folder.path,
+      depth,
+      count: folder.count,
+      expandable,
+    });
+
+    if (!openPaths.has(folder.path)) continue;
+
+    walkNav(folder.children, depth + 1, openPaths, out);
+
+    for (const note of folder.notes) {
+      out.push({
+        kind: 'note',
+        name: note.title,
+        path: folder.path,
+        folderPath: folder.path === ROOT_FOLDER ? '' : folder.path,
+        depth: depth + 1,
+        count: 1,
+        expandable: false,
+        href: note.href,
+      });
+    }
+  }
 }
 
 /** 顶部文件夹（板块内的第一层），用于首页卡片展示技术域 */

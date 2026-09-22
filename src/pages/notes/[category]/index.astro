@@ -4,7 +4,7 @@ import NoteCard from '../../../components/NoteCard.vue';
 import CategoryTree from '../../../components/CategoryTree.vue';
 import { getCollection } from 'astro:content';
 import { CATEGORY_META } from '../../../content.config';
-import { buildFolderTree, flattenTree, stripCategory } from '../../../lib/tree';
+import { buildFolderTree, toNavTree, stripCategory } from '../../../lib/tree';
 
 export async function getStaticPaths() {
   const allNotes = await getCollection('notes');
@@ -27,8 +27,8 @@ const categoryStats = Object.entries(CATEGORY_META).map(([id, m]) => ({
   count: allNotes.filter(n => n.data.category === id).length,
 }));
 
-// 当前板块的文件夹层级树（扁平化，带缩进深度）
-const tree = flattenTree(buildFolderTree(categoryNotes.map(n => ({
+// 当前板块的文件夹层级树（含文件级节点，供侧边栏导航）
+const tree = buildFolderTree(categoryNotes.map(n => ({
   title: n.data.title,
   slug: stripCategory(n.slug),
   folderPath: n.data.folderPath,
@@ -38,7 +38,8 @@ const tree = flattenTree(buildFolderTree(categoryNotes.map(n => ({
   featured: n.data.featured,
   summary: n.data.summary,
   category: n.data.category,
-}))));
+})));
+const navTree = toNavTree(tree);
 
 const notesForRender = categoryNotes.map(n => ({
   title: n.data.title,
@@ -70,7 +71,7 @@ const notesForRender = categoryNotes.map(n => ({
       <CategoryTree
         categories={categoryStats}
         currentCategory={category}
-        tree={tree}
+        navTree={navTree}
         client:idle
       />
 
@@ -116,23 +117,33 @@ const notesForRender = categoryNotes.map(n => ({
   const emptyHint = document.getElementById('empty-hint');
   const listDesc = document.getElementById('list-desc');
   const totalCount = cards.length;
+  const ROOT_FOLDER = '__root__'; // 与 lib/tree.ts 保持一致：板块根目录下的散装笔记
   let activeFolder = '';
   let sortBy = 'updated';
+
+  function matches(folder: string): boolean {
+    if (!activeFolder) return true;
+    if (activeFolder === ROOT_FOLDER) return folder === '';
+    return folder === activeFolder || folder.startsWith(activeFolder + '/');
+  }
+
+  function folderLabel(): string {
+    return activeFolder === ROOT_FOLDER ? '根目录' : activeFolder;
+  }
 
   function applyFilter() {
     let visible = 0;
     for (const card of cards) {
-      const folder = card.dataset.folder || '';
-      const match = !activeFolder || folder === activeFolder || folder.startsWith(activeFolder + '/');
+      const match = matches(card.dataset.folder || '');
       card.hidden = !match;
       if (match) visible++;
     }
     if (filterBar) filterBar.hidden = !activeFolder;
-    if (filterPath) filterPath.textContent = activeFolder || '';
+    if (filterPath) filterPath.textContent = folderLabel();
     if (emptyHint) emptyHint.hidden = visible > 0;
     if (listDesc) {
       listDesc.textContent = activeFolder
-        ? `${visible} / ${totalCount} 篇 · 分区：${activeFolder}`
+        ? `${visible} / ${totalCount} 篇 · 分区：${folderLabel()}`
         : `${totalCount} 篇 · 按 Typora 目录层级 树状分区`;
     }
   }

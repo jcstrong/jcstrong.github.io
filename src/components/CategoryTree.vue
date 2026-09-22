@@ -18,7 +18,7 @@
             <span class="node-count mono">{{ cat.count }}</span>
           </a>
           <button
-            v-if="cat.id === currentCategory && tree.length"
+            v-if="cat.id === currentCategory && nav.length"
             class="tree-caret"
             :title="expanded ? '收起' : '展开'"
             @click="expanded = !expanded"
@@ -27,32 +27,45 @@
           </button>
         </div>
 
-        <!-- 当前板块的文件夹层级树 -->
-        <div v-if="cat.id === currentCategory && expanded && tree.length" class="tree-children">
-          <div
-            v-for="node in visibleTree"
-            :key="node.path"
-            class="tree-row"
-          >
+        <!-- 当前板块：文件夹 → 文件 完整层级导航 -->
+        <div v-if="cat.id === currentCategory && expanded && nav.length" class="tree-children">
+          <div v-for="(item, i) in nav" :key="`${item.kind}-${item.path}-${item.name}-${i}`" class="tree-row">
+            <!-- 文件夹：点击筛选 -->
             <button
+              v-if="item.kind === 'folder'"
               class="tree-leaf"
-              :class="{ active: activeFolder === node.path }"
-              :style="{ paddingLeft: `${8 + node.depth * 12}px` }"
-              @click="select(node.path)"
+              :class="{ active: activeFolder === item.path }"
+              :style="{ paddingLeft: `${8 + item.depth * 12}px` }"
+              @click="select(item.path)"
             >
               <span class="leaf-name">
-                <span class="leaf-icon">{{ node.children.length ? (isOpen(node.path) ? '▾' : '▸') : '·' }}</span>
-                {{ node.name || '根目录' }}
+                <span class="leaf-icon">{{ item.expandable ? (isOpen(item.path) ? '▾' : '▸') : '·' }}</span>
+                {{ item.name }}
               </span>
-              <span class="node-count mono">{{ node.count }}</span>
+              <span class="node-count mono">{{ item.count }}</span>
             </button>
-            <button
-              v-if="node.children.length"
-              class="tree-caret"
-              :title="isOpen(node.path) ? '收起' : '展开'"
-              @click="toggleNode(node.path)"
+
+            <!-- 文件（笔记）：点击进入详情 -->
+            <a
+              v-else
+              :href="item.href"
+              class="tree-leaf tree-file"
+              :style="{ paddingLeft: `${8 + item.depth * 12}px` }"
+              :title="item.name"
             >
-              {{ isOpen(node.path) ? '−' : '+' }}
+              <span class="leaf-name">
+                <span class="leaf-icon">·</span>
+                {{ item.name }}
+              </span>
+            </a>
+
+            <button
+              v-if="item.kind === 'folder' && item.expandable"
+              class="tree-caret"
+              :title="isOpen(item.path) ? '收起' : '展开'"
+              @click="toggleNode(item.path)"
+            >
+              {{ isOpen(item.path) ? '−' : '+' }}
             </button>
           </div>
         </div>
@@ -79,6 +92,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
+import { flattenNav, type NavFolder, type NavItem } from '../lib/tree';
 
 interface Category {
   id: string;
@@ -86,20 +100,11 @@ interface Category {
   count: number;
 }
 
-interface FlatNode {
-  name: string;
-  path: string;
-  count: number;
-  directCount: number;
-  depth: number;
-  children: { path: string }[];
-}
-
 const props = defineProps<{
   categories: Category[];
   currentCategory?: string;
-  /** 扁平化后的文件夹树（仅当前板块） */
-  tree?: FlatNode[];
+  /** 当前板块的精简导航树 */
+  navTree?: NavFolder[];
   activeFolder?: string;
 }>();
 
@@ -116,12 +121,12 @@ const sortOptions = [
   { id: 'readingTime', label: '按篇幅' },
 ];
 
-// 已展开的文件夹路径集合（切换板块时重置，默认展开第一层）
+// 已展开的文件夹（默认展开第一层，文件级节点随之可见）
 const openSet = ref<Set<string>>(new Set());
 watch(
-  () => [props.currentCategory, props.tree] as const,
+  () => [props.currentCategory, props.navTree] as const,
   () => {
-    openSet.value = new Set((props.tree || []).filter(n => n.depth === 0).map(n => n.path));
+    openSet.value = new Set((props.navTree || []).map(n => n.path));
   },
   { immediate: true }
 );
@@ -137,17 +142,8 @@ function toggleNode(path: string) {
   openSet.value = next;
 }
 
-/** 只渲染祖先链全部展开的节点 */
-const visibleTree = computed(() => {
-  return (props.tree || []).filter(node => {
-    const segments = node.path.split('/');
-    for (let i = 1; i < segments.length; i++) {
-      const ancestor = segments.slice(0, i).join('/');
-      if (!openSet.value.has(ancestor)) return false;
-    }
-    return true;
-  });
-});
+/** 可见导航项（文件夹 + 文件）由展开状态推导 */
+const nav = computed<NavItem[]>(() => flattenNav(props.navTree || [], openSet.value));
 
 function select(path: string) {
   const next = path === props.activeFolder ? '' : path;
@@ -165,7 +161,7 @@ function selectSort(id: string) {
 
 <style scoped>
 .category-tree {
-  width: 220px;
+  width: 250px;
   flex-shrink: 0;
   padding: 16px 12px;
   background: var(--bg-secondary);
@@ -239,6 +235,7 @@ function selectSort(id: string) {
   color: var(--text-tertiary);
   cursor: pointer;
   font-size: 10px;
+  flex-shrink: 0;
 }
 
 .node-label {
@@ -248,6 +245,7 @@ function selectSort(id: string) {
 .node-count {
   font-size: 11px;
   color: var(--text-tertiary);
+  flex-shrink: 0;
 }
 
 .tree-node.active .node-count {
@@ -262,7 +260,8 @@ function selectSort(id: string) {
   display: flex;
   align-items: center;
   gap: 6px;
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   padding: 4px 8px;
   font-size: 11px;
   color: var(--text-tertiary);
@@ -272,6 +271,7 @@ function selectSort(id: string) {
   cursor: pointer;
   border-radius: var(--radius-sm);
   line-height: 1.5;
+  text-decoration: none;
 }
 
 .tree-leaf:hover {
@@ -283,6 +283,15 @@ function selectSort(id: string) {
   color: var(--accent-text);
   background: var(--accent-light);
   font-weight: 500;
+}
+
+/* 文件级节点：与文件夹区分（无计数、字色更浅、悬停显示下划线感） */
+.tree-file {
+  color: var(--text-secondary);
+}
+
+.tree-file .leaf-icon {
+  opacity: 0.5;
 }
 
 .leaf-name {
