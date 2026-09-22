@@ -6,7 +6,7 @@ folderTop: ""
 tags: ["Docker", "DevOps", "服务编排"]
 featured: true
 source: "docker-compose.yaml.md"
-updated: 2026-07-07
+updated: "2026-07-07"
 readingTime: 6
 summary: "如果你顺着这份 Compose 文件往下看，最值得先掌握的是下面几类配置：  image   表示直接使用现成镜像，例如 mysql:8.0、kibana:8.19.10、qdrant/qdrant:v1.16。  build   表示不是..."
 ---

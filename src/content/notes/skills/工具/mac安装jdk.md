@@ -6,7 +6,7 @@ folderTop: "工具"
 tags: ["开发工具", "效率"]
 featured: false
 source: "工具/mac安装jdk.md"
-updated: 2021-08-12
+updated: "2021-08-12"
 readingTime: 1
 summary: "toc  mac安装jdk  下载安装jdk 官网下载地址https://www.oracle.com/technetwork/java/javase/downloads/jdk8downloads2133151.html  验证 java..."
 ---

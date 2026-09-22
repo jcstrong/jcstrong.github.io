@@ -6,7 +6,7 @@ folderTop: "建站"
 tags: ["建站", "Web"]
 featured: false
 source: "建站/spa/spa.md"
-updated: 2025-11-14
+updated: "2025-11-14"
 readingTime: 2
 summary: "Material  域名 域名 GoDaddy username：sixbmanspa Customer No.： 675227837 password：6sixbman@SPA Verify it's you A text message..."
 ---

@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/Django/概述Django.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 20
 summary: "toc  Django中文官方文档https://docs.djangoproject.com/zhhans/3.2/  本文视频地址https://www.bilibili.com/video/BV1cZ4y1p7sg/  2.3.12视..."
 ---

@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/第05章 pandas入门.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 31
 summary: "pandas是本书后续内容的首选库。它含有使数据清洗和分析工作变得更快更简单的数据结构和操作工具。pandas经常和其它工具一同使用，如数值计算工具NumPy和SciPy，分析库statsmodels和scikitlearn，和数据可视化库..."
 ---

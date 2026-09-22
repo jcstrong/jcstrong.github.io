@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/DRF/Hello DRF.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 8
 summary: "toc  前后端分离 降低耦合度  前后端不分离 后端渲染页面或重定向 <img src=\"https://chenjunxs.osscnhangzhou.aliyuncs.com/img/20210901181050.png\" style..."
 ---

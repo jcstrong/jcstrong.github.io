@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/6.其他算法/HMM.md"
-updated: 2023-03-05
+updated: "2023-03-05"
 readingTime: 13
 summary: "隐马尔可夫\r \r  目标\r \r 1. 知道什么是自动机\r 2. 知道什么是马尔可夫链\r 3. 知道隐马尔可夫是什么\r 4. 知道隐马尔可夫的原理是什么\r 5. 知道如何使用隐马尔可夫完成分词，词性标注等任务\r 6. 知道MEMM是什么\r 7..."
 ---

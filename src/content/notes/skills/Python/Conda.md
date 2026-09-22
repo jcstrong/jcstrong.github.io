@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Conda"]
 featured: false
 source: "Python/Conda.md"
-updated: 2026-06-29
+updated: "2026-06-29"
 readingTime: 6
 summary: "Conda 安装 condahttps://repo.anaconda.com/miniconda/  查看是否成功： conda version 卸载conda： rm rf ~/anaconda3  添加镜像源永久添加\t\t conda ..."
 ---

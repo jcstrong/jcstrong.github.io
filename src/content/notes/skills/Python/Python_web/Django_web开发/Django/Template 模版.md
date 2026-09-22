@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/Django/Template 模版.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 6
 summary: "title: tkinter date: 20210209 19:34:31 tags: python toc  Django使用自带模板 在工程中创建模板目录templates。 在settings.py配置文件中修改TEMPLATES配..."
 ---

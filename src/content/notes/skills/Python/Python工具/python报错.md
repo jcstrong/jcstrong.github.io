@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "工具"]
 featured: false
 source: "Python/Python工具/python报错.md"
-updated: 2021-05-12
+updated: "2021-05-12"
 readingTime: 2
 summary: "toc  PYGAME  Invalid rectstyle object （0，0，0）解释器并没有把他当成一个参数，因为后面还有rect = None,的默认参数，所以必须要把（0，0，0）单独括起来，才能把它作为一个元组。 （（255..."
 ---

@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/PyMySQL.md"
-updated: 2022-07-05
+updated: "2022-07-05"
 readingTime: 5
 summary: "PyMySQL的使用 toc 学习目标  能够使用PyMySQL完成数据库的增删改查  1. 思考 如何实现将100000条数据插入到MySQL数据库? 答案: 如果使用之前学习的MySQL客户端来完成这个操作，那么这个工作量无疑是巨大的，..."
 ---

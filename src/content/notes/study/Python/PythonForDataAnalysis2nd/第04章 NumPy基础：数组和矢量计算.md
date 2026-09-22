@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/第04章 NumPy基础：数组和矢量计算.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 30
 summary: "NumPy（Numerical Python的简称）是Python数值计算最重要的基础包。大多数提供科学计算的包都是用NumPy的数组作为构建基础。 NumPy的部分功能如下：  ndarray，一个具有矢量算术运算和复杂广播能力的快速且节..."
 ---

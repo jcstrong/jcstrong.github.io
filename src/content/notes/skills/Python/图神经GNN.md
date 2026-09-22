@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["GNN", "图神经网络"]
 featured: false
 source: "Python/图神经GNN.md"
-updated: 2023-03-12
+updated: "2023-03-12"
 readingTime: 26
 summary: "关系抽取 https://blog.csdn.net/weixin_42691585/article/details/108061271  GNN 【带你快速理解RGCN（relationalGCN）哔哩哔哩】 https://b23.tv..."
 ---

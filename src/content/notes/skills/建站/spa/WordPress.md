@@ -6,7 +6,7 @@ folderTop: "建站"
 tags: ["建站", "Web"]
 featured: false
 source: "建站/spa/WordPress.md"
-updated: 2025-11-14
+updated: "2025-11-14"
 readingTime: 7
 summary: "以下是在 CentOS 8.2 上从零开始搭建 WordPress 的完整流程。建议全程使用 root 权限或在命令前加上 sudo。  环境准备  更新系统      dnf update y     替换源      mv /etc/y..."
 ---

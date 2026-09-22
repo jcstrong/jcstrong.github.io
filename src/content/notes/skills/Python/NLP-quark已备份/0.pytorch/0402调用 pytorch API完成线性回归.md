@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/0.pytorch/0402调用 pytorch API完成线性回归.md"
-updated: 2022-07-06
+updated: "2022-07-06"
 readingTime: 8
 summary: "Pytorch完成基础的模型\r \r  目标\r \r 1. 知道Pytorch中Module的使用方法\r 2. 知道Pytorch中优化器类的使用方法\r 3. 知道Pytorch中常见的损失函数的使用方法\r 4. 知道如何在GPU上运行代码\r ..."
 ---

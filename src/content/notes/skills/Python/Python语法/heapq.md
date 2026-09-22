@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "语法基础"]
 featured: false
 source: "Python/Python语法/heapq.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 4
 summary: "toc  python的堆: heapqhttps://docs.python.org/zhcn/3/library/heapq.html模块的使用 heapq 模块实现了适用于Python列表的最小堆排序算法。 heappop metho..."
 ---

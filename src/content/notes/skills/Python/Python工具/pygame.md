@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "工具"]
 featured: false
 source: "Python/Python工具/pygame.md"
-updated: 2022-07-05
+updated: "2022-07-05"
 readingTime: 6
 summary: "Pygame模块总览 toc 控制设备https://www.jianshu.com/p/a3cb64df65d7 | 作用      |                                | |  |  | | cdrom  ..."
 ---

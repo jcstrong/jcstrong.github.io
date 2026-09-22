@@ -6,7 +6,7 @@ folderTop: "建站"
 tags: ["建站", "Web"]
 featured: false
 source: "建站/hexo流程.md"
-updated: 2022-07-06
+updated: "2022-07-06"
 readingTime: 8
 summary: "toc  什么都不如官方文档  Hexohttps://hexo.io/zhcn/docs/ 官方文档  Materyhttp://blinkfox.com/2018/09/28/qianduan/hexobokezhutizhihexot..."
 ---

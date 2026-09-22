@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "语法基础"]
 featured: false
 source: "Python/Python语法/python字符串.md"
-updated: 2022-07-05
+updated: "2022-07-05"
 readingTime: 6
 summary: "字符串 toc python  str1='123456'  str1 '123456'  str10 '1'  maxstr1 '6'  lenstr1 6  str2='nihao'  str1+str2 '123456nihao'  ..."
 ---

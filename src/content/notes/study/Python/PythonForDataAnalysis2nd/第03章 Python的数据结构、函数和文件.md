@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/第03章 Python的数据结构、函数和文件.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 32
 summary: "本章讨论Python的内置功能，这些功能本书会用到很多。虽然扩展库，比如pandas和Numpy，使处理大数据集很方便，但它们是和Python的内置数据处理工具一同使用的。 我们会从Python最基础的数据结构开始：元组、列表、字典和集合。..."
 ---

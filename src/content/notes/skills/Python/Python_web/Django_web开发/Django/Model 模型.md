@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/Django/Model 模型.md"
-updated: 2021-09-01
+updated: "2021-09-01"
 readingTime: 17
 summary: "toc  数据的增删改      python   from django.db import models          Create your models here.   class BookInfomodels.Model:  ..."
 ---

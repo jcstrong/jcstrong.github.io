@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/第02章 Python语法基础，IPython和Jupyter Notebooks.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 32
 summary: "第2章 Python语法基础，IPython和Jupyter Notebooks 当我在2011年和2012年写作本书的第一版时，可用的学习Python数据分析的资源很少。这部分上是一个鸡和蛋的问题：我们现在使用的库，比如pandas、sc..."
 ---

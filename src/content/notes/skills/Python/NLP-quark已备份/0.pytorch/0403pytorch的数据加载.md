@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/0.pytorch/0403pytorch的数据加载.md"
-updated: 2022-04-19
+updated: "2022-04-19"
 readingTime: 6
 summary: "Pytorch中的数据加载\r \r  目标\r \r 1. 知道数据加载的目的\r 2. 知道pytorch中Dataset的使用方法\r 3. 知道pytorch中DataLoader的使用方法\r 4. 知道pytorch中的自带数据集如何获取\r ..."
 ---

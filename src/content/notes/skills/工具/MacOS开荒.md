@@ -6,7 +6,7 @@ folderTop: "工具"
 tags: ["开发工具", "效率"]
 featured: false
 source: "工具/MacOS开荒.md"
-updated: 2023-03-05
+updated: "2023-03-05"
 readingTime: 2
 summary: "重启关闭sip\tcsrutils disable 开启任何来源\tsudo spctl masterdisable 👆可以解决 ：“Paste”已损坏，无法打开。 您应该将它移到废纸篓。 popcliphttps://appstorrent..."
 ---

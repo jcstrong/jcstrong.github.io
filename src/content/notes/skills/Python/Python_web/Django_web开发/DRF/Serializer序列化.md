@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/DRF/Serializer序列化.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 13
 summary: "toc  Serializer序列化器 作用：进行数据的校验、对数据对象进行转换  定义Serializer DRF中的Serializer使用类来定义，须继承自rest_framework.serializers.Serializer。 ..."
 ---

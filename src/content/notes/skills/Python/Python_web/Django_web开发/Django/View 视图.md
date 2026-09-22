@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/Django/View 视图.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 22
 summary: "toc  视图: 一类具有相同功能和模板的网页的集合 在 Django 中，网页和其他内容都是从视图派生而来。每一个视图表现为一个 Python 函数（或者说方法，如果是在基于类的视图里的话）。Django 将会根据用户请求的 URL 来选..."
 ---

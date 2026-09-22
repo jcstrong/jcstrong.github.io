@@ -6,7 +6,7 @@ folderTop: "工作实用指南"
 tags: ["Git"]
 featured: false
 source: "工作实用指南/git.md"
-updated: 2023-07-25
+updated: "2023-07-25"
 readingTime: 2
 summary: "本地版本控制：每次更新都记录一个快照或补丁文件，个人使用 集中版本控制 SVN：所有的版本数据都保存在服务器上，所有开发者从服务器上同步更新或上传自己的修改  SVN的服务器down了可能会有风险，需要定期备份 分布式版本控制 GIT：所有..."
 ---

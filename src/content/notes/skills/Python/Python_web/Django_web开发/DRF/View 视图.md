@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/DRF/View 视图.md"
-updated: 2021-09-09
+updated: "2021-09-09"
 readingTime: 9
 summary: "toc  REST framework中的视图  DRF提供的扩展Request类 REST framework 传入视图的request对象不再是Django默认的HttpRequest对象，而是REST framework提供的扩展了H..."
 ---

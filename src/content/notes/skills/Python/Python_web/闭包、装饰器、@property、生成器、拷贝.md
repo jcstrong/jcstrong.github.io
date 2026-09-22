@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/闭包、装饰器、@property、生成器、拷贝.md"
-updated: 2022-07-05
+updated: "2022-07-05"
 readingTime: 17
 summary: "toc  闭包  需求：我们前面已经学过了函数，我们知道当函数调用完，函数内定义的变量都销毁了，但是我们有时候需要保存函数内的这个变量，每次在这个变量的基础上完成一些列的操作，比如: 每次在这个变量的基础上和其它数字进行求和计算，那怎么办呢..."
 ---

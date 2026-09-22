@@ -6,7 +6,7 @@ folderTop: "工作实用指南"
 tags: ["Maven", "Java"]
 featured: false
 source: "工作实用指南/maven.md"
-updated: 2023-07-21
+updated: "2023-07-21"
 readingTime: 2
 summary: "IDEA中的Maven指令https://blog.csdn.net/qq_40547893/article/details/110091275\r \r  clean命令\r \r 清除由项目编译创建的target\r \r  validate命令\r..."
 ---

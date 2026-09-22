@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/附录A NumPy高级应用.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 29
 summary: "在这篇附录中，我会深入NumPy库的数组计算。这会包括ndarray更内部的细节，和更高级的数组操作和算法。 本章包括了一些杂乱的章节，不需要仔细研究。  A.1 ndarray对象的内部机理 NumPy的ndarray提供了一种将同质数据..."
 ---

@@ -6,7 +6,7 @@ folderTop: "工具"
 tags: ["开发工具", "效率"]
 featured: false
 source: "工具/centos.md"
-updated: 2022-07-06
+updated: "2022-07-06"
 readingTime: 1
 summary: "toc  centos8 yum换源 下载新的 CentOSBase.repo 到 /etc/yum.repos.d/ groovy  进入yum目录 cd /etc/yum.repos.d  删除目录下所有文件注意完整复制，不要漏了那个点..."
 ---

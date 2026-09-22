@@ -15,7 +15,26 @@
 
 笔记源在 Typora 目录：`/Users/chenjun/Library/CloudStorage/OneDrive-个人/Typora`
 
-通过构建期同步脚本 `scripts/sync-notes.mjs` 把 218 篇 markdown 按四维分类映射到 `src/content/notes/<category>/`，注入 frontmatter。
+同步脚本 `scripts/sync-notes.mjs` 把 218 篇 markdown 按 **四大板块** 归类，并**完整保留 Typora 原始文件夹层级**：
+
+| 板块 | 说明 | 篇数 |
+|---|---|---|
+| `projects` 项目实战 | 精选实战项目（AI Agent / NLP / 知识图谱 / Docker） | 18 |
+| `skills` 技能图谱 | Python / Linux / 工具 / 嵌入式 / 建站 / AI 技术域 | 160 |
+| `practice` 工程实践 | 工作实用指南（Git / Maven / Logback / 拦截器 / DevOps） | 11 |
+| `study` 学习笔记 | 系统学习与读书笔记 | 29 |
+
+### 文件夹层级如何呈现
+
+1. **落盘镜像**：`src/content/notes/<板块>/<原文件夹路径>/<文件>.md`，因此页面 URL 自带层级语义，例如
+   `/notes/skills/Python/Python_web/Django_web开发/Django/xxx/`
+2. **frontmatter**：每篇笔记写入 `folderPath`（如 `Python/Python_web/Django_web开发`）与 `folderTop`（顶层目录）
+3. **树状分区**：`src/lib/tree.ts` 依据 `folderPath` 还原树（含各节点递归计数），侧边栏 `CategoryTree.vue` 渲染为可折叠树，点击即筛选右侧列表（客户端完成，无需后端）
+4. **面包屑**：详情页展示完整目录层级，每一级可点击跳回带筛选的列表（`#folder=...`）
+
+### 排序与筛选
+
+列表页支持三种排序（最近更新 / 按标题 / 按篇幅）与文件夹筛选，均由页面内联脚本完成，纯静态无接口。
 
 ## 本地开发
 

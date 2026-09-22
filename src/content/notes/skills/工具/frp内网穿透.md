@@ -6,7 +6,7 @@ folderTop: "工具"
 tags: ["开发工具", "效率"]
 featured: false
 source: "工具/frp内网穿透.md"
-updated: 2026-04-02
+updated: "2026-04-02"
 readingTime: 10
 summary: "frp内网穿透 get！！！ https://post.smzdm.com/p/adwlor3x/\\ frp_0.26.0_linux_amd64下载https://github.com/fatedier/frp/releases/tag/..."
 ---

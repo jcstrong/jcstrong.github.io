@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "工具"]
 featured: false
 source: "Python/Python工具/vscode.md"
-updated: 2021-08-23
+updated: "2021-08-23"
 readingTime: 1
 summary: "toc  python安装 https://www.python.org/downloads/release/python372/ pycharmhttp://www.jetbrains.com/pycharm/download  vsco..."
 ---

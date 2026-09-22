@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/0.pytorch/0403pytorch实现手写数字识别.md"
-updated: 2022-04-20
+updated: "2022-04-20"
 readingTime: 11
 summary: "使用Pytorch实现手写数字识别\r \r  目标\r \r 1. 知道如何使用Pytorch完成神经网络的构建\r 2. 知道Pytorch中激活函数的使用方法\r 3. 知道Pytorch中torchvision.transforms中常见图形处..."
 ---

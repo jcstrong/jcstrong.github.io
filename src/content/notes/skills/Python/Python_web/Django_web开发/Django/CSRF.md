@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/Django/CSRF.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 7
 summary: "toc  CSRF\tCross Site Request Forgery跨站请求伪造。 指攻击者盗用了你的身份，以你的名义发送恶意请求。  包括：以你名义发送邮件，发消息，盗取你的账号，甚至于购买商品，虚拟货币转账......  造成的问题..."
 ---

@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/DRF/View 视图集.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 11
 summary: "toc  视图集ViewSet  增强路由匹配规则  使用视图集ViewSet，可以将一系列逻辑相关的动作放到一个类中：    list 提供一组数据    retrieve 提供单个数据    create 创建数据    update ..."
 ---

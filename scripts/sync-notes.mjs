@@ -216,7 +216,8 @@ function injectFrontmatter(content, rule, relPath, mtime) {
     `tags: [${rule.tags.map(t => JSON.stringify(t)).join(', ')}]`,
     `featured: ${rule.featured || false}`,
     `source: ${JSON.stringify(relPath)}`,
-    `updated: ${updated}`,
+    // 必须加引号：否则 YAML 会把 2026-09-14 解析成 Date 对象，页面会显示成长串且受时区影响
+    `updated: ${JSON.stringify(updated)}`,
     `readingTime: ${readingTime}`,
     `summary: ${JSON.stringify(summary)}`,
     '---',

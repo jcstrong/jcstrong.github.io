@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/0.pytorch/02pytorch.md"
-updated: 2023-02-03
+updated: "2023-02-03"
 readingTime: 1
 summary: "pytorch  Pytorch安装地址https://pytorch.org/getstarted/locally/ 带GPU安装步骤： conda install pytorch torchvision cudatoolkit=9.0 ..."
 ---

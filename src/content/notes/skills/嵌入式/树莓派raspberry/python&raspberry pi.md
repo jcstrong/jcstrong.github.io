@@ -6,7 +6,7 @@ folderTop: "嵌入式"
 tags: ["嵌入式", "树莓派"]
 featured: false
 source: "嵌入式/树莓派raspberry/python&raspberry pi.md"
-updated: 2022-07-06
+updated: "2022-07-06"
 readingTime: 27
 summary: "toc  配置geany 1. 检查Python版本    python、python3 2. 安装文本编辑器Geany        sudo aptget install geany     3. 配置geany：如果你的系统安装了多个..."
 ---

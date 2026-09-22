@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["GCN", "BiLSTM", "NLP"]
 featured: false
 source: "Python/GCN+BiLSTM.md"
-updated: 2023-03-23
+updated: "2023-03-23"
 readingTime: 2
 summary: "导师要求必须用平台的数据做毕设，不过可以在实验部分用自己标注的数据  平台数据：售后维修单、索赔单这些，大概就是这些数据。（图片缺失：image20230312204536026.png）  其中包含故障信息的是索赔单里面的文本描述  （图..."
 ---

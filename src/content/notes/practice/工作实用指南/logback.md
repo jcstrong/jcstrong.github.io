@@ -6,7 +6,7 @@ folderTop: "工作实用指南"
 tags: ["Logback", "日志", "Java"]
 featured: false
 source: "工作实用指南/logback.md"
-updated: 2023-11-18
+updated: "2023-11-18"
 readingTime: 1
 summary: "https://zhuanlan.zhihu.com/p/535100067 SLF4J（Simple Logging Facade for Java）是一个为各种日志框架（如 Log4j、Logback 等）提供统一接口的库。它允许你在运..."
 ---

@@ -6,7 +6,7 @@ folderTop: "工作实用指南"
 tags: ["DevOps", "CI/CD"]
 featured: false
 source: "工作实用指南/DevOps.md"
-updated: 2023-12-07
+updated: "2023-12-07"
 readingTime: 2
 summary: "软件的生命周期 整体的软件开发流程包括：  PLAN：开发团队根据客户的目标制定开发计划  CODE：根据PLAN开始编码过程，需要将不同版本的代码存储在一个库中。  BUILD：编码完成后，需要将代码构建并且运行。  TEST：成功构建项..."
 ---

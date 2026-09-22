@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/README.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 3
 summary: "README <div align=center     <img src=\"http://uploadimages.jianshu.io/upload_images/71786910d965cf51eb5af9e.png?imageMog..."
 ---

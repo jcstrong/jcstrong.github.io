@@ -6,7 +6,7 @@ folderTop: "工具"
 tags: ["开发工具", "效率"]
 featured: false
 source: "工具/jupyter notebook.md"
-updated: 2021-11-19
+updated: "2021-11-19"
 readingTime: 2
 summary: "toc  快捷键操作  两种模式通用快捷键    Shift+Enter，执行本单元代码，并跳转到下一单元    Ctrl+Enter，执行本单元代码，留在本单元  命令模式：按ESC进入    Y，cell切换到Code模式    M，c..."
 ---

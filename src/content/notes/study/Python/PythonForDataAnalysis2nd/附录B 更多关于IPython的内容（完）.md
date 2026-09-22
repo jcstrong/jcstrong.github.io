@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["数据分析", "读书笔记", "pandas"]
 featured: false
 source: "Python/PythonForDataAnalysis2nd/附录B 更多关于IPython的内容（完）.md"
-updated: 2022-09-22
+updated: "2022-09-22"
 readingTime: 24
 summary: "第2章中，我们学习了IPython shell和Jupyter notebook的基础。本章中，我们会探索IPython更深层次的功能，可以从控制台或在jupyter使用。  B.1 使用命令历史 Ipython维护了一个位于磁盘的小型数据..."
 ---

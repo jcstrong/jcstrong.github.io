@@ -6,7 +6,7 @@ folderTop: "工具"
 tags: ["开发工具", "效率"]
 featured: false
 source: "工具/IDEA快捷键.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 2
 summary: "toc  IDEA快捷键 设置IDEA Mac快捷键风格为Intellij IDEA Classic，如不是则首先需要在Preferences中切换  CMD + N 查找类  Alt + Enter / Option + Enter 引入..."
 ---

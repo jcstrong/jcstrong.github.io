@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "工具"]
 featured: false
 source: "Python/Python工具/lambda匿名函数.md"
-updated: 2022-07-05
+updated: "2022-07-05"
 readingTime: 1
 summary: "toc  lambda匿名函数 冒号前是参数，可以有多个，用逗号隔开，冒号右边的返回值。lambda语句构建的其实是一个函数对象 例子 python def fx: \treturn x2 Python中使用lambda的话，等价于 pyth..."
 ---

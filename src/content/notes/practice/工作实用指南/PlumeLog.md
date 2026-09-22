@@ -6,7 +6,7 @@ folderTop: "工作实用指南"
 tags: ["PlumeLog", "日志聚合", "Java"]
 featured: false
 source: "工作实用指南/PlumeLog.md"
-updated: 2023-11-17
+updated: "2023-11-17"
 readingTime: 1
 summary: "dockercompose部署plumlog的dockerfilehttps://blog.csdn.net/qq_38225558/article/details/128655125 安装懒人包https://gitee.com/zhen..."
 ---

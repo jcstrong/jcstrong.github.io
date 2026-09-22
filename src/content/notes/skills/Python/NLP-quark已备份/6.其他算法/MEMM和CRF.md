@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/6.其他算法/MEMM和CRF.md"
-updated: 2023-03-05
+updated: "2023-03-05"
 readingTime: 4
 summary: "最大熵马尔科夫和CRF\r \r \r \r 最大熵模型（MaxEnt）：指的是多元逻辑回归\r \r 由于等概率的分布具有最大熵，所以最大熵的模型通过词性标注问题来描述就是：\r \r 1. 在没有任何假设的情况下，认为每种词性的概率都是相同的，假设有1..."
 ---

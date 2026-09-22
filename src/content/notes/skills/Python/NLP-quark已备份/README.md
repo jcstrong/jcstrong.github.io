@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/README.md"
-updated: 2023-03-05
+updated: "2023-03-05"
 readingTime: 3
 summary: "NLP Course\r \r  介绍\r \r 内容主要讲解神经网络和pytorch，同时在最后完成了一个类似智能客服的聊天机器人项目\r \r  content list\r \r text\r  神经网络和pytorch\r    深度学习和神经网络./..."
 ---

@@ -6,7 +6,7 @@ folderTop: "工作实用指南"
 tags: ["环境配置"]
 featured: false
 source: "工作实用指南/安装Home环境.md"
-updated: 2023-12-07
+updated: "2023-12-07"
 readingTime: 6
 summary: "Mac环境安装Home OpenJDK下载地址https://www.azul.com/downloads/?version=java8lts&os=macos&package=jdkzulu  安装Home环境 按照下图修改setup.s..."
 ---

@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "工具"]
 featured: false
 source: "Python/Python工具/TK编写GUI.md"
-updated: 2022-06-06
+updated: "2022-06-06"
 readingTime: 18
 summary: "toc  常用PythonGUI库  Tkinter   Tkinter 模块Tk 接口是 Python 的标准 Tk GUI 工具包的接口 .Tk 和 Tkinter 可以在大多数的 Unix 平台下使用,同样可以应用在 Windows ..."
 ---

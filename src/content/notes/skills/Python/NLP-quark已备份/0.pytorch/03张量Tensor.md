@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["NLP"]
 featured: false
 source: "Python/NLP-quark已备份/0.pytorch/03张量Tensor.md"
-updated: 2022-07-06
+updated: "2022-07-06"
 readingTime: 4
 summary: "张量Tensor\r \r  1. 张量Tensor\r \r 张量是一个统称，其中包含很多类型：\r \r 1. 0阶张量：标量、==常数==，0D Tensor\r 2. 1阶张量：==向量==，1D Tensor\r 3. 2阶张量：==矩阵==，2..."
 ---

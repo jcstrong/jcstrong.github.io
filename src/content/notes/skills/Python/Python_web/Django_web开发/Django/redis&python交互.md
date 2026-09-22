@@ -6,7 +6,7 @@ folderTop: "Python"
 tags: ["Python", "Web"]
 featured: false
 source: "Python/Python_web/Django_web开发/Django/redis&python交互.md"
-updated: 2022-05-23
+updated: "2022-05-23"
 readingTime: 9
 summary: "toc  redis官方文档https://github.com/andymccurdy/redispy/readme  安装Redis的有3种方式https://github.com/andymccurdy/redispy    第一种：..."
 ---

@@ -6,7 +6,7 @@ folderTop: "AI"
 tags: ["AI", "ChatGPT"]
 featured: false
 source: "AI/ChatGPT.md"
-updated: 2026-06-10
+updated: "2026-06-10"
 readingTime: 3
 summary: "OpenClaw Win gateway token 297cREDACTED Mac gateway token b967REDACTED 192.168.31.190 192.168.31.189 M1 macbook gateway ..."
 ---
