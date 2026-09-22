@@ -44,7 +44,7 @@ jcstrong.github.io/
 ├── scripts/sync-notes.mjs         # Typora → content/notes 同步
 ├── src/
 │   ├── components/                # Vue 组件
-│   ├── content/notes/             # 笔记 markdown 源（同步生成，不入库）
+│   ├── content/notes/             # 笔记 markdown 源（同步生成，已入库供 CI 构建）
 │   │   ├── projects/              # PART 01 项目实战
 │   │   ├── skills/                # PART 02 技能图谱
 │   │   ├── practice/              # PART 03 工程实践
@@ -56,18 +56,60 @@ jcstrong.github.io/
 └── public/                        # 静态资源
 ```
 
-## 部署
+## 部署（当前已上线）
 
-GitHub Actions 在 push 时自动构建并部署到 GitHub Pages。
+**线上地址**：https://jcstrong.github.io
 
-**仓库命名要求**：必须使用 `<username>.github.io` 命名（即 `jcstrong.github.io`）才能用顶级域名 `https://jcstrong.github.io`。当前仓库名 `jc.github.io` 走子路径部署，建议改名。
+| 项 | 值 |
+|---|---|
+| 仓库 | `jcstrong/jcstrong.github.io` |
+| 部署分支 | `homepage`（源码分支） |
+| 图床分支 | `master`（PicGo 图床，**不存放主页源码，保持零改动**） |
+| Pages 模式 | GitHub Actions（`build_type: workflow`） |
 
-### 改名步骤
+### 仓库结构说明（重要）
 
-1. GitHub 仓库 Settings → General → Repository name 改为 `jcstrong.github.io`
-2. Settings → Pages → Source 选 `GitHub Actions`
-3. push 代码触发 workflow 自动部署
-4. 访问 https://jcstrong.github.io 验证
+这个仓库同时承担两个角色，因此分支是分开的：
+
+- **`master` 分支** = PicGo 图床。图片在 `img/`（`https://jcstrong.github.io/img/xxx.png`），另有 `2021/`、`archives/`、`fonts/` 三个历史目录。**主页源码不放这里**，避免干扰 PicGo 上传。
+- **`homepage` 分支** = 主页源码（Astro 项目）。
+
+CI 构建时会**同时检出两个分支**：源码来自 `homepage`，图床目录从 `master` 拷进部署产物，因此：
+
+1. 笔记里的图床图片 URL（`/img/...`）在主页上照常显示
+2. PicGo 继续往 `master` 上传不受影响
+3. 主页 URL 是根路径 `https://jcstrong.github.io/`
+
+> 若 PicGo 又上传了新图片、想让新图也进部署产物，手动触发一次 Actions（Actions → Build and Deploy → Run workflow）即可。
+
+### 日常更新流程
+
+```bash
+cd homepage
+
+# 1. 只管在 Typora 写笔记
+
+# 2. 同步笔记（会顺带做密钥脱敏）
+npm run sync
+
+# 3. 本地预览确认
+npm run build && npm run preview
+
+# 4. 发布
+git add -A && git commit -m "notes: 更新笔记" && git push
+# push 后 GitHub Actions 自动构建部署，约 2 分钟生效
+```
+
+### 密钥脱敏（安全机制）
+
+`scripts/sync-notes.mjs` 内置 `redactSecrets()`，笔记里出现的真实密钥**不会**被发布到公开站点：
+
+- 已知凭证前缀无条件脱敏：`LTAI*`（阿里云 AK）、`secret_*`（Notion）、`ghp_*` / `github_pat_*`（GitHub）、`ntn_*`、`sk-*`、`AKIA*`、`xox*`
+- 上下文脱敏：`AccessKey / Secret / Token / 密码 / 密钥` 等关键词附近 6 行内的长随机串
+- URL 内片段（如图床 CDN 的哈希文件名）自动跳过，避免图片裂开
+
+**源笔记（Typora 目录）不受影响，仅同步副本被清洗。**
+
 
 ## 主题
 
