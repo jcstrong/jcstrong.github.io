@@ -180,6 +180,34 @@ $NPM run build && $NPM run preview -- --port 4321     # 预览构建产物（推
 $GH workflow run deploy.yml --repo jcstrong/jcstrong.github.io --ref homepage
 ```
 
+### 7.7 用户改了本地文件夹层级，怎么同步到网页
+
+**原理**：站点内容 = 仓库里的 `src/content/notes/**`（CI 里没有 Typora 目录），所以本地改完必须 `sync → commit → push`。同步会**先整目录删除四个板块再重建**，因此移动/重命名后不会残留旧层级。
+
+分场景对照：
+
+| 用户改了什么 | 需要做什么 |
+|---|---|
+| 在已有文件夹之间移动笔记 | 直接 `npm run sync` → push，分类与树自动更新 |
+| **重命名文件夹** | ⚠️ 必须同步修改 `CLASSIFICATION_MAP` 里的 `pattern`，否则该目录所有笔记会掉进兜底「学习笔记 + `未分类`」 |
+| 新建文件夹 | 加一条映射规则指定板块；不加则兜底 `study` |
+| 新增/删除笔记文件 | sync → push，导航计数与页面数自动更新 |
+| 重命名笔记文件 | URL 随之变化（无重定向，旧链接 404），导航/面包屑自动更新 |
+| 搬迁整个 Typora 根目录 | 改 `scripts/sync-notes.mjs` 顶部的 `TYPORA_ROOT` 常量 |
+| 文件夹内新增本地相对图片 | 自动复制到 `public/images/<folderPath>/` 并改写路径；⚠️ **旧图片文件不会被自动清理**（同步只清理 `src/content/notes` 四个板块目录），需要时手动删 `public/images` 下的孤儿目录 |
+
+标准流程（改完文件夹层级后）：
+
+```bash
+cd /Users/chenjun/WorkBuddy/2026-09-21-15-50-29/homepage
+npm run sync                                   # 重建 content，旧层级自动清除
+grep -rl '"未分类"' src/content/notes | head    # 有输出 = 有笔记没命中规则，需按 7.1 补映射
+npm run build && npm run preview               # 本地确认树形、计数、导航
+git add -A && git commit -m "notes: 调整文件夹层级" && git push
+# Actions 自动部署，约 2 分钟；随后 curl 抽查列表页与树
+```
+
+
 ---
 
 ## 8. 已知坑与报错对照表
