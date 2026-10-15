@@ -57,6 +57,32 @@ const skillMatrix = [
 
     <hr class="divider" />
 
+
+    <section class="oss">
+      <div class="section-header">
+        <h2 class="section-title">开源贡献</h2>
+        <a href="https://github.com/jcstrong" target="_blank" rel="noopener" class="section-link">GitHub →</a>
+      </div>
+      <a href="https://github.com/homarr-labs/homarr/pull/6923" target="_blank" rel="noopener" class="oss-card card-hover">
+        <div class="oss-body">
+          <div class="oss-meta mono">homarr-labs/homarr · PR #6923 · <span class="oss-badge">MERGED</span></div>
+          <h3 class="oss-title">修复 Docker 容器 CPU 监控恒显 ~0% 的问题</h3>
+          <p class="oss-summary">
+            在自托管环境中发现 Docker one-shot stats 缺失 precpu 基线，导致重启后的容器 CPU 恒显 ~0%；
+            定位根因后提交基线缓存修复并补充单元测试，已合入 release/v2，随 v2.2.0 发布。
+          </p>
+          <div class="project-tags">
+            <span class="tag mono">TypeScript</span>
+            <span class="tag mono">Docker</span>
+            <span class="tag mono">开源协作</span>
+          </div>
+        </div>
+        <div class="oss-arrow mono">↗</div>
+      </a>
+    </section>
+
+    <hr class="divider" />
+
     <section class="featured">
       <div class="section-header">
         <h2 class="section-title">精选项目实战</h2>
@@ -128,6 +154,61 @@ const skillMatrix = [
 .section-link {
   font-size: 11px;
   color: var(--text-tertiary);
+}
+
+.oss-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: var(--bg-secondary);
+  border: 0.5px solid var(--border-tertiary);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.oss-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.oss-meta {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.oss-badge {
+  color: var(--accent);
+}
+
+.oss-title {
+  font-size: 15px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.oss-summary {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 10px;
+  max-width: 720px;
+}
+
+.oss-arrow {
+  font-size: 18px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.oss-card:hover .oss-arrow {
+  color: var(--accent);
 }
 
 .project-grid {
